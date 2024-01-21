@@ -9,10 +9,24 @@ class Label(pydantic.BaseModel):
     label: str
     excerpt: str
 
+    def __str__(self):
+        return f"- **{self.label}**: \"{self.excerpt}\""
+
 class ExampleLabeledStory(pydantic.BaseModel):
     story: Story
     labels: list[Label]
 
+    def __str__(self):
+        return f"""### Reddit Story\n
+        {self.story.title}\n
+        {self.story.story}\n\n
+        #### Labeled Sample Text:\n\n
+        {self.labels}
+        """
+
+class HTMLStory(pydantic.BaseModel):
+    # TODO: use bs4 to render story as html using labels and lemmatized words
+    pass
 
 system_prompt = "You are an Labeling System Specialist, who helps create interesting stories by labeling their individual parts for future post processing, according to a strict ruleset. You are meticulous and thorough, and go through the texts you label line by line to extract every detail and fulfill your stage in the processing pipeline."
 
