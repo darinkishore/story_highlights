@@ -10,7 +10,6 @@ def index(request):
     return HttpResponse(template.render({}, request))
     
     
-# TODO: change so we don't use form anymore
 
 from transformations.src.highlight_ai import label_story
 
