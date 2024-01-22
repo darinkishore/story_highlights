@@ -13,17 +13,11 @@ hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
     </h2>
     <div class="grid gap-4">
       <div class="space-y-2">
-        <label
-          class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          for="input-text"
-        >
-          Input Text
-        </label>
-        <textarea
-          class="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[200px]"
-          id="input-text"
-          placeholder="Enter your text here..."
-        ></textarea>
+        <form method="post" hx-post="/process" hx-target="#output-text">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <input type="submit" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:text-accent-foreground h-10 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200" value="Process" />
+        </form>
       </div>
       <div class="space-y-2">
         <label
@@ -44,25 +38,25 @@ hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
     </div>
     <div class="flex items-center justify-center space-x-4">
       <button
-        hx-post="/edit_1"
-        hx-target="#output-text"
-        hx-vals='{"input_text": document.getElementById("input-text").value}'
+        type="button"
+        onclick="this.form.submit();"
+        disabled
         class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:text-accent-foreground h-10 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
       >
         Edit 1
       </button>
       <button
-        hx-post="/edit_2"
-        hx-target="#output-text"
-        hx-vals='{"input_text": document.getElementById("input-text").value}'
+        type="button"
+        onclick="this.form.submit();"
+        disabled
         class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:text-accent-foreground h-10 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
       >
         Edit 2
       </button>
       <button
-        hx-post="/highlight"
-        hx-target="#output-text"
-        hx-vals='{"input_text": document.getElementById("input-text").value}'
+        type="button"
+        onclick="this.form.submit();"
+        disabled
         class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:text-accent-foreground h-10 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
       >
         Highlight
@@ -70,4 +64,19 @@ hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
     </div>
   </div>
 </div>
+<script>
+  document.body.addEventListener('htmx:beforeRequest', function(event) {
+    // Disable all submit buttons when a request is made
+    document.querySelectorAll('input[type=\"submit\"], button').forEach(function(button) {
+      button.disabled = true;
+    });
+  });
+
+  document.body.addEventListener('htmx:afterRequest', function(event) {
+    // Re-enable all submit buttons when a request is complete
+    document.querySelectorAll('input[type=\"submit\"], button').forEach(function(button) {
+      button.disabled = false;
+    });
+  });
+</script>
 {% endblock %}
