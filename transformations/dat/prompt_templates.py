@@ -110,10 +110,10 @@ def generate_user_prompt(story):
 # The hardcoded story_labels list is removed as it is no longer needed.
 
 
-def generate_labeled_text(story_labels):
+def generate_labeled_text(labels):
     labeled_text = "#### Labeled Sample Text:\n\n"
-    for excerpt, label in story_labels:
-        labeled_text += f'- **{label}**: "{excerpt}"\n'
+    for label in labels:
+        labeled_text += f'- **{label.label}**: "{label.excerpt}"\n'
     return labeled_text
 
 
