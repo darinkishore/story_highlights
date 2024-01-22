@@ -12,17 +12,13 @@ Please use the format `**Label**: "Specific excerpt"`.
 For example:
 
 ```
-#### Labeled Sample Text:
+#### Labeled Sections
 
-- **Unknown Role**: "You are Death, but in a postapocalyptic world."
-- **Positive Time Reference**: "Only a few survivors remain,"
-- **Positive Description**: "and you're doing everything you can to help them"
-- **Important Detail**: "because if the last human dies, you die as well."
-- **Unknown Role**: "The survivors can't see you, but they feel your presence and noticed your effort."
-- **Positive Description**: "They started to call you Life."
-- **Negative Time Reference**: "Five thousand left today on all the Earth."
-- **Violence/Danger**: "I cut the soul of the five thousand and first not one hour ago."
-
+- **Negative Time Reference**: "Present-day 2038,"
+- **Antagonist/Villain**: "“Net Neutrality” has been unalived"
+- **Negative Time Reference**: "for almost two decades."
+- **Unknown Role**: "A small rebel group travels back to"
+- **Positive Time Reference**: "2017 to try and change it all…"
 ```
 
 Your detailed and accurate labeling is crucial, as it will be extracted via a script. Please consider every line and maintain the formatting consistently. Thank you."""
@@ -88,10 +84,6 @@ descriptions = {
     "Water-Related Description": "Label all water body-related descriptions.",
 }
 
-
-# TODO: add prompt part 0 that identifies number of male/female side characters to dynamically generate/allow for the
-#  labeling of the correct number of characters
-
 #  PROMPT PART 1: RULES AND PLANNING
 
 
@@ -141,12 +133,12 @@ def generate_labeled_text(story_labels):
 
 
 def generate_follow_up_prompt(story, story_labels):
-    prompt = "Thank you for the planning phase! Now, please proceed to label each line as identified, ensuring thoroughness and precision.\n\n"
+    prompt = "Thank you for the planning phase! Now, please proceed to label each line as identified, ensuring thoroughness and precision. Don't blindly highlight everything!\n\n"
     prompt += 'Please use the format `**Label**: "Specific excerpt"`.\n\n'
     prompt += "For example:\n\n```"
     prompt += f"\n### Reddit Story\n```\n{story}\n```\n\n"
     prompt += "\n#### Labeled Sample Text:\n\n"
     prompt += generate_labeled_text(story_labels)
     prompt += "```\n\n"
-    prompt += "\nYour detailed and accurate labeling is crucial, as it will be extracted via a script. Please consider every line and maintain the formatting consistently. Thank you."
+    prompt += "\n An accurate and engaging labeling is crucial, as it will be extracted via a script. Consider every line and maintain the formatting consistently. Thank you."
     return prompt

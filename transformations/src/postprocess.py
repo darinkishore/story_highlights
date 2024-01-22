@@ -1,5 +1,5 @@
 import spacy
-from transformations.src.colors import get_color_mapping
+from transformations.dat.colors import get_color_mapping
 nlp = spacy.load("en_core_web_sm")
 
 def segment_text(text):
