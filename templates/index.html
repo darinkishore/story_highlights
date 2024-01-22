@@ -32,19 +32,30 @@
                 class="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[200px]"
                 id="output-text"
                 placeholder="Processed text will appear here..."
-                disabled=""
               ></textarea>
             </div>
           </div>
           <div class="flex items-center justify-center space-x-4">
-            <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:text-accent-foreground h-10 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200">
-              Filter 1
+            <button 
+              hx-post="/edit_1" 
+              hx-target="#output-text" 
+              hx-vals='{"input_text": document.getElementById("input-text").value}' 
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:text-accent-foreground h-10 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200">
+              Edit 1
             </button>
-            <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:text-accent-foreground h-10 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200">
-              Filter 2
+            <button 
+              hx-post="/edit_2" 
+              hx-target="#output-text" 
+              hx-vals='{"input_text": document.getElementById("input-text").value}' 
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:text-accent-foreground h-10 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200">
+              Edit 2
             </button>
-            <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:text-accent-foreground h-10 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200">
-              Filter 3
+            <button 
+              hx-post="/highlight" 
+              hx-target="#output-text" 
+              hx-vals='{"input_text": document.getElementById("input-text").value}' 
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:text-accent-foreground h-10 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200">
+              Highlight
             </button>
           </div>
         </div>

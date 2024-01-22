@@ -16,6 +16,8 @@ def index(request):
     '''
     return HttpResponse(html)
 
+# TODO: change so we don't use form anymore
+
 def highlight(request):
     if request.method == 'POST':
         form = TextProcessingForm(request.POST)
@@ -23,8 +25,18 @@ def highlight(request):
             # Process form data
             # ...
             # Return an HTMX response (e.g., JsonResponse with the processed text)
+            raise NotImplementedError
     else:
         form = TextProcessingForm()
 
     return render(request, 'highlight.html', {'form': form})
 
+def edit_1(request):
+    if request.method == 'POST':
+        form = TextProcessingForm(request.POST)
+    raise NotImplementedError
+
+def edit_2(request):
+    if request.method == 'POST':
+        form = TextProcessingForm(request.POST)
+    raise NotImplementedError
