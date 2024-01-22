@@ -132,11 +132,20 @@ def generate_labeled_text(story_labels):
     return labeled_text
 
 
-def generate_follow_up_prompt(story, story_labels):
+# TODO: use the models in .models.py to dynamically provide examples for each category of labels.
+# pseudocode:
+# for category in categories: (ie: characters, plot elements, descriptions)
+#     go through each reddit story in the samples, in stories_html.reference.py
+#     for each story, read those into the pydantic models in .models.py
+#     get stats on label counts for all the stories
+#     use the story with the most labels for each category as the example
+#     return the example story in the format below:
+
+def generate_follow_up_prompt(example, example_labels):
     prompt = "Thank you for the planning phase! Now, please proceed to label each line as identified, ensuring thoroughness and precision. Don't blindly highlight everything!\n\n"
     prompt += 'Please use the format `**Label**: "Specific excerpt"`.\n\n'
     prompt += "For example:\n\n```"
-    prompt += f"\n### Reddit Story\n```\n{story}\n```\n\n"
+    prompt += f"\n### Reddit Story\n```\n{example}\n```\n\n"
     prompt += "\n#### Labeled Sample Text:\n\n"
     prompt += generate_labeled_text(story_labels)
     prompt += "```\n\n"
