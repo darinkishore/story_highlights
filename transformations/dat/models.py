@@ -38,6 +38,12 @@ class LabeledStory(BaseModel):
     labels: List[Label]
     html_story: str = None
 
+    def to_markdown(self) -> str:
+        markdown_text = f'### {self.story.title}\n\n{self.story.story}\n\n#### Labeled Sections:\n\n'
+        for label in self.labels:
+            markdown_text += str(label) + '\n'
+        return markdown_text
+
     @classmethod
     def from_markdown(
         cls, markdown_text: str, story_text: str, story_title: str = "Story Title"
