@@ -1,2 +1,7 @@
 Django
+openai
+python-dotenv
 Pydantic
+requests
+spacy
+pysubstringsearch
