@@ -37,8 +37,16 @@ def get_color_mapping(key):
             key = "Other Male" if "Other Male" in key else "Other Female"
             key = f"{key} {ind - 3}"
     
-
-    return color_mappings.get(key, None)
+    try:
+        color = color_mappings[key]
+    except KeyError:
+        raise KeyError(f"Label {key} not found in color mapping.")
+    return color
 
 def get_reverse_color_mapping(value):
-    return {v: k for k, v in color_mappings.items()}.get(value, None)
+    reverse_map =  {v: k for k, v in color_mappings.items()}
+    try:
+        key = reverse_map[value]
+    except KeyError:
+        raise KeyError(f"Value {value} not found in reverse mapping.")
+    return key

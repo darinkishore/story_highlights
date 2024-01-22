@@ -1,8 +1,9 @@
 from spacy import load
-from typing import List
+from typing import List, Any
 from pydantic import BaseModel
 import re
-
+import pysubstringsearch as psss
+import os 
 
 # Define the Pydantic models
 
@@ -10,6 +11,18 @@ import re
 class Story(BaseModel):
     title: str
     story: str
+    substring_file_path: str = ''
+    
+    def create_substring_file(self):
+        file_hash = hash(self.story)
+        filepath = os.getcwd() + f"/{file_hash}.idx"
+        if os.path.exists(filepath):
+            self.substring_file_path = filepath
+            return
+        writer = psss.Writer(filepath)
+        writer.add_entry(self.story)
+        writer.finalize()
+        self.substring_file_path = filepath
 
 
 class Label(BaseModel):
@@ -23,13 +36,14 @@ class Label(BaseModel):
 class LabeledStory(BaseModel):
     story: Story
     labels: List[Label]
+    html_story: str = None
 
     @classmethod
     def from_markdown(
         cls, markdown_text: str, story_text: str, story_title: str = "Story Title"
     ):
-        # Fix regex pattern to handle empty excerpts
-        label_pattern = re.compile(r'- \*\*(.*?)\*\*: "(.*?)"\s*')
+        # Update the regex pattern to handle nested quotations
+        label_pattern = re.compile(r'- \*\*(.*?)\*\*: "(.*?)"(?=\s|$)')
         labels = []
         
         for match in label_pattern.finditer(markdown_text):
@@ -38,6 +52,22 @@ class LabeledStory(BaseModel):
             
         story = Story(title=story_title, story=story_text)
         return cls(story=story, labels=labels)
+    
+    def apply_html_tags(self, color_mapping):
+        html_story = self.story.story
+
+        for label in self.labels:
+            try:
+                color = color_mapping[label.label]
+            except KeyError:
+                raise KeyError(f"Label {label.label} not found in color mapping.")
+            
+            html_tag = f'<span style="color:{color};">{label.excerpt}</span>'
+            escaped_excerpt = re.escape(label.excerpt.strip("\""))
+            pattern = fr'(\b|\s|^)({escaped_excerpt})(\b|\s|$)'
+            html_story = re.sub(pattern, r'\1' + html_tag + r'\3', html_story)
+
+        return html_story
 
     def __str__(self):
         labeled_text = "\n".join(str(label) for label in self.labels)
@@ -49,6 +79,41 @@ class LabeledStory(BaseModel):
         {self.labeled_text}
         """
 
-class HTMLStory(BaseModel):
     # TODO: ensure we don't have fucky formatting when matching, add fuzzy matching or lemmatization-based matching.
-    pass
+
+class HTMLStory(BaseModel):
+    story: Story
+    labels: List[Label]
+
+    def find_all_matches(self):
+        reader = psss.Reader(index_file_path=self.story.substring_file_path)
+        matches = {}
+        for label in self.labels:
+            excerpt = label.excerpt.strip("\"")
+            matches[excerpt] = reader.search(excerpt)
+        return matches
+
+    def resolve_ties(self, matches):
+        # TODO: Implement proximity-based tie-breaking logic
+        raise NotImplementedError
+
+    def apply_html_tags(self, color_mapping):
+        html_story = self.story.story
+        all_matches = self.find_all_matches()
+
+        for label in self.labels:
+            excerpt = label.excerpt.strip("\"")
+            match_positions = all_matches[excerpt]
+
+            if len(match_positions) > 1:
+                chosen_match = self.resolve_ties(match_positions)
+            else:
+                chosen_match = match_positions[0] if match_positions else None
+
+            if chosen_match:
+                color = color_mapping.get(label.label, "#000000")
+                html_tag = f'<span style="color:{color};">{label.excerpt}</span>'
+                pattern = re.escape(chosen_match)
+                html_story = re.sub(pattern, html_tag, html_story, 1)  # Apply the tag only to the chosen match
+
+        return html_story

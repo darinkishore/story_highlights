@@ -31,12 +31,12 @@ The first voice spoke again - coming from the closest man, who waved his 'gun' t
 - **Important Information**: "the FCC headquarters -"
 - **Important Information**: "he heard a voice."
 
-- **Other Male 1**: "Named after Donald Trump,"
+- **Male Character 1**: "Named after Donald Trump,"
 - **Important Information**: "the First Inaugurator of the Great American Monopoly,"
 - **Main Male Character**: "Donald"
 - **Important Information**: "had never heard English spoken with an accent like the one the voice carried:"
 
-- **Other Male 2**: "I'm gunna need ya to put that trigga down mate."
+- **Male Character 2**: "I'm gunna need ya to put that trigga down mate."
 
 - **Negative Descriptions**: "There was a distinct menace"
 - **Important Information**: "in the tone and the confidence"
@@ -56,9 +56,9 @@ The first voice spoke again - coming from the closest man, who waved his 'gun' t
 - **Unknown Role**: ""I dinnea think he underrrstood ye" a second voice"
 - **Important Information**: "muttered"
 - **Positive Time Reference**: "before"
-- **Other Male 3**: "a third voice"
+- **Male Character 3**: "a third voice"
 - **Important Information**: "exclaimed,"
-- **Other Male 3**: ""Be a good chap and place the trigger on the bed. We won't unalive you unless you refuse.""
+- **Male Character 3**: ""Be a good chap and place the trigger on the bed. We won't unalive you unless you refuse.""
 
 - **Main Male Character**: "Donald"
 - **Important Information**: "whirled around, expecting to see little grey men or green sludge monsters."
@@ -70,8 +70,8 @@ The first voice spoke again - coming from the closest man, who waved his 'gun' t
 - **Unknown Role**: "and one of them"
 - **Important Information**: "carried something that he had never seen before - a smallish rectangular object which had moving pictures on the top face - the person holding it was jabbing at it and running his fingers across the images."
 
-- **Other Male 2**: "first voice"
-- **Imporant information**: "spoke again"
+- **Male Character 2**: "first voice"
+- **Important information**: "spoke again"
 - **Groups of People**: "closest man"
 - **Important Information**: "who waved his"
 - **Danger/Violence**: "'gun'"
