@@ -42,8 +42,8 @@ class LabeledStory(BaseModel):
     def from_markdown(
         cls, markdown_text: str, story_text: str, story_title: str = "Story Title"
     ):
-        # Update the regex pattern to handle nested quotations
-        label_pattern = re.compile(r'- \*\*(.*?)\*\*: "(.*?)"(?=\s|$)')
+        # Update the regex pattern to handle nested quotations including asterisks and phrases inside double quotations
+        label_pattern = re.compile(r'- \*\*(.*?)\*\*: "((?:[^"\\]|\\.)*)"(?=\s|$)')
         labels = []
         
         for match in label_pattern.finditer(markdown_text):
@@ -72,12 +72,7 @@ class LabeledStory(BaseModel):
     def __str__(self):
         labeled_text = "\n".join(str(label) for label in self.labels)
         
-        return f"""### Reddit Story\n
-        {self.story.title}\n
-        {self.story.story}\n\n
-        #### Labeled Text:\n\n
-        {self.labeled_text}
-        """
+        return f'\n\n### {self.story.title}\n\n```\n{self.story.story}\n```\n\n#### Labeled Sample Text:\n\n{labeled_text}\n'
 
     # TODO: ensure we don't have fucky formatting when matching, add fuzzy matching or lemmatization-based matching.
 
