@@ -7,12 +7,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.x'
+        python-version: '3.11'
 
     - name: Create and activate virtual environment
       run: |
@@ -20,20 +20,10 @@ jobs:
         source venv/bin/activate
 
     - name: Install Django
-      run: pip install django
+      run: pip install -r requirements.txt
 
-    - name: Start Django development server
-      run: |
-        python manage.py runserver &
-        SERVER_PID=$!
-        sleep 5
-        if lsof -i :8000; then
-          echo "Server started successfully"
-          kill $SERVER_PID
-        else
-          echo "Server failed to start"
-          exit 1
-        fi
+    - name: Run checks
+      run: python manage.py check
 
     - name: Run tests
       run: python manage.py test

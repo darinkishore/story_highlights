@@ -10,7 +10,6 @@ def index(request):
     return HttpResponse(template.render({}, request))
     
     
-# TODO: change so we don't use form anymore
 
 def highlight(request):
     if request.htmx:
