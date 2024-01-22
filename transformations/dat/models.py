@@ -85,21 +85,23 @@ class HTMLStory(BaseModel):
     story: Story
     labels: List[Label]
 
-    def find_all_matches(self):
-        reader = psss.Reader(index_file_path=self.story.substring_file_path)
+    def find_all_matches(self, reference_stories=None):
+        if not reference_stories:
+            reader = psss.Reader(index_file_path=self.story.substring_file_path)
         matches = {}
         for label in self.labels:
             excerpt = label.excerpt.strip("\"")
             matches[excerpt] = reader.search(excerpt)
         return matches
 
-    def resolve_ties(self, matches):
+    def resolve_ties(self, matches, reference_excerpt=None):
         # TODO: Implement proximity-based tie-breaking logic
-        raise NotImplementedError
+        # For now, return the first match assuming ordered text
+        return matches[0] if matches else None
 
-    def apply_html_tags(self, color_mapping):
+    def apply_html_tags(self, color_mapping, reference_stories=None):
         html_story = self.story.story
-        all_matches = self.find_all_matches()
+        all_matches = self.find_all_matches(reference_stories)
 
         for label in self.labels:
             excerpt = label.excerpt.strip("\"")
