@@ -59,4 +59,5 @@ def get_last(message_history: List[dict]):
 def label_story(story: str):
     _ = (kickstart(story))
     highlight_schema = get_last(_)
+    # TODO: Apply HTML formatting to the labeled story
     return highlight_schema
