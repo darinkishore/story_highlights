@@ -24,9 +24,26 @@ def highlight(request):
 def edit_1(request):
     if request.method == 'POST':
         form = TextProcessingForm(request.POST)
-    raise NotImplementedError
+        if form.is_valid():
+            # Assuming edit_1_process is a function that processes the text for edit_1
+            processed_text = edit_1_process(form.cleaned_data['text'])
+            return HttpResponse(processed_text, content_type='text/html')
+        else:
+            return HttpResponse("Invalid form data", status=400)
+    else:
+        return HttpResponse("Invalid request", status=400)
 
 def edit_2(request):
+    if request.method == 'POST':
+        form = TextProcessingForm(request.POST)
+    raise NotImplementedError
+            # Assuming edit_2_process is a function that processes the text for edit_2
+            processed_text = edit_2_process(form.cleaned_data['text'])
+            return HttpResponse(processed_text, content_type='text/html')
+        else:
+            return HttpResponse("Invalid form data", status=400)
+    else:
+        return HttpResponse("Invalid request", status=400)
     if request.method == 'POST':
         form = TextProcessingForm(request.POST)
     raise NotImplementedError
