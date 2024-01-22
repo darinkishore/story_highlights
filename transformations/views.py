@@ -4,6 +4,7 @@ from datetime import datetime
 from django.http import HttpResponse
 from .forms import TextProcessingForm
 from django.template import loader
+from .src.highlight_ai import label_story
 
 def index(request):
     template = loader.get_template("transformations/index.html")
@@ -15,11 +16,11 @@ def index(request):
 def highlight(request):
     if request.htmx:
         if request.method == 'POST':
-            # get text from input field
-            # highlight the text by calling the highlight_text function
-            # from transformations/src/highlight_ai.py
-            # return the html-highlighted text
-            raise NotImplementedError
+            text_to_highlight = request.POST['text_field_name']  # TODO: Replace 'text_field_name' with actual field name
+            labeled_story = label_story(text_to_highlight)
+            # TODO: Apply HTML formatting to the labeled story
+            html_content = f'<div>{{labeled_story}}</div>'  # Simple HTML wrapper for demonstration
+            return HttpResponse(html_content)
             
 
 def edit_1(request):
