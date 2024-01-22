@@ -20,6 +20,7 @@ The first voice spoke again - coming from the closest man, who waved his 'gun' t
     """, r"""#### Labeled Sections
 
 - **Negative Time Reference**: "Present-day 2038,"
+- **Antagonist/Villain**: ." - **Negative Time Reference**: "
 - **Antagonist/Villain**: "“Net Neutrality” has been unalived"
 - **Negative Time Reference**: "for almost two decades."
 - **Unknown Role**: "A small rebel group travels back to"
@@ -120,6 +121,7 @@ She snorted. "Really? We're still not over this?"
         r"""#### Labeled Sections
 
 - **Main Female Character**: "college girl"
+- **Important Information**: ." - **Negative Time Reference**: "
 - **Important Information**: "number above her head."
 
 - **Negative Time Reference**: "Three thousand and nine."
@@ -210,6 +212,7 @@ Right at that moment, Nagini slid across the floor. As it was making its way to 
         r"""#### Labeled Sections
 
 - **Main Male Character**: "Harry"
+- **Important Information**: ." - **Groups of People**: "
 - **Important Information**: "strode forward"
 - **Groups of People**: "two"
 - **Danger/Violence**: "collapsed"
