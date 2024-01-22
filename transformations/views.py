@@ -3,6 +3,7 @@ from django.shortcuts import render
 from datetime import datetime
 from django.http import HttpResponse
 from .forms import TextProcessingForm
+from transformations.src.highlight_ai import label_story
 from django.template import loader
 
 def index(request):
@@ -15,8 +16,9 @@ def index(request):
 def highlight(request):
     if request.htmx:
         if request.method == 'POST':
-            # get text from input field
-            # highlight the text by calling the highlight_text function
+            story = request.POST.get('story')
+            html_content = label_story(story)
+            return HttpResponse(html_content)
             # from transformations/src/highlight_ai.py
             # return the html-highlighted text
             raise NotImplementedError
