@@ -37,7 +37,7 @@ characters = {
     "Main Female Character": "Label name, pronouns, and dialogue.",
     
     "Female Character 1|2|3|n": "For each female side character, label their individual name/pronouns/dialogue as "
-    "Female Character n. (where n is a consistently assigned number for their character "
+    "`Female Character n`. (where n is a consistently assigned number for their character "
     "in order of appearance)",
     
     "Antagonist/Villain": "Only during and after a character's reveal as the antagonist/villain, label their name, "
@@ -61,27 +61,31 @@ plot_elements = (
         "in the climax or resolution of the story. Do not label the whole sentence(s), "
         "but only the most important contributing snippets.",
         
-        "Positive Time References": "Label references to a particular time, event, or memory that are positive and "
+        "Positive Time Reference": "Label references to a particular time, event, or memory that are positive and "
         "favorably looked remembered/anticipated, (eg: anniversaries, birthdays, etc.)",
         
-        "Neutral Time References": "Label references to a particular time, event, or memory that are generally "
+        "Neutral Time Reference": "Label references to a particular time, event, or memory that are generally "
         "neutral. Always label dates, ages, months, and years.",
         
-        "Negative Time References": "Label references to a particular time, event, or memory that are remembered "
+        "Negative Time Reference": "Label references to a particular time, event, or memory that are remembered "
         "unfavorably or anticipated with dread.",
     },
 )
 
 # Descriptions dictionary
 descriptions = {
-    "Positive Descriptions": "Label adjectives and adverbs that are in a positive context, or describe something "
+    "Positive Description": "Label adjectives and adverbs that are in a positive context, or describe something "
     "positive/happy in general.",
-    "Negative Descriptions": "Label creepy/negative/bad adjectives, adverbs, and verbs.",
-    "Nature Descriptions": "Label all nature-related descriptions. This includes plants, animals, natural phenomena, "
+    
+    "Negative Description": "Label creepy/negative/bad adjectives, adverbs, and verbs.",
+    
+    "Nature Description": "Label all nature-related descriptions. This includes plants, animals, natural phenomena, "
     "forests, ecosystems, and the like.",
+    
     "Money and Wealth": "Label references to money, wealth, luxury, opulence. This includes expensive things, places, "
     "services, scenarios. Any specific dollar amount should also be labeled.",
-    "Water-Related Descriptions": "Label all water body-related descriptions.",
+    
+    "Water-Related Description": "Label all water body-related descriptions.",
 }
 
 
