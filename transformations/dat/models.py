@@ -2,6 +2,7 @@ from spacy import load
 from typing import List, Any
 from pydantic import BaseModel
 import re
+import hashlib
 import pysubstringsearch as psss
 import os 
 
@@ -14,7 +15,7 @@ class Story(BaseModel):
     substring_file_path: str = ''
     
     def create_substring_file(self):
-        file_hash = hash(self.story)
+        file_hash = hashlib.sha256(self.story.encode('utf-8')).hexdigest()
         filepath = os.getcwd() + f"/{file_hash}.idx"
         if os.path.exists(filepath):
             self.substring_file_path = filepath
