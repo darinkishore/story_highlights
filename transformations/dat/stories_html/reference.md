@@ -1,3 +1,5 @@
+# 1
+
 ### Reddit Story
 Present-day 2038, “Net Neutrality” has been unalived for almost two decades. A small rebel group travels back to 2017 to try and change it all…
 
@@ -79,7 +81,7 @@ The first voice spoke again - coming from the closest man, who waved his 'gun' t
 - **Other Male 2**: ""For the last time, put down tha bloomin' trigga!""
 
 
-
+# 2
 
 ### Reddit Story
 
@@ -194,6 +196,9 @@ She snorted. "Really? We're still not over this?"
 - **Main Male Character**: "How old are you?"
 
 - **Main Female Character**: "Really? We're still not over this?"
+
+# 3
+
 
 ### Reddit Story
 Harry strode forward as the two collapsed before him. The pair of Death Eaters had been trying to take him by surprise. But years of living under the Dursley's torment, coupled with his time as a Seeker, had left his senses honed for even the smallest of disturbances. They would have been better off running. At least then, Harry would have been able to enjoy hunting them down.
