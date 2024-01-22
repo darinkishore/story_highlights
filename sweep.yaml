@@ -3,9 +3,14 @@
 
 # This setting contains a list of rules that Sweep will check for. If any of these rules are broken in a new commit, Sweep will create an pull request to fix the broken rule.
 rules:
-  - "All new business logic should have corresponding unit tests."
+  - "All new business logic should have corresponding unit tests using Pytest."
   - "Refactor large functions to be more modular."
-  - "Add docstrings to all functions and file headers."
+  - "Ensure all HTML generation uses safe string substitution to prevent injection attacks."
+  - "HTMX should be used for all AJAX requests."
+  - "All client-side reactivity should be handled by Alpine.js."
+  - "Follow the DRY (Don't Repeat Yourself) principle, especially in template generation and HTML styling."
+  - "All frontend functionality should at least have placeholder code in the backend."
+
 
 # This is the branch that Sweep will develop from and make pull requests to. Most people use 'main' or 'master' but some users also use 'dev' or 'staging'.
 branch: 'main'
@@ -18,10 +23,10 @@ gha_enabled: True
 # Example:
 #
 # description: sweepai/sweep is a python project. The main api endpoints are in sweepai/api.py. Write code that adheres to PEP8.
-description: ''
+description: 'This project is a Django web application that processes and transforms text data (using OpenAI Calls), focusing on labeling and highlighting text. The transformations directory contains the core logic for text processing and data modeling with Pydantic. The templates/ directory contains the HTML frontend for the web application.'
 
 # This sets whether to create pull requests as drafts. If this is set to True, then all pull requests will be created as drafts and GitHub Actions will not be triggered.
 draft: False
 
 # This is a list of directories that Sweep will not be able to edit.
-blocked_dirs: []
+blocked_dirs: [example, vercel_app, static]
