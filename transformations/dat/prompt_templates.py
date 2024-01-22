@@ -141,13 +141,13 @@ def generate_labeled_text(story_labels):
 #     use the story with the most labels for each category as the example
 #     return the example story in the format below:
 
-def generate_follow_up_prompt(example, example_labels):
+def generate_follow_up_prompt(labeled_story: LabeledStory):
     prompt = "Thank you for the planning phase! Now, please proceed to label each line as identified, ensuring thoroughness and precision. Don't blindly highlight everything!\n\n"
     prompt += 'Please use the format `**Label**: "Specific excerpt"`.\n\n'
     prompt += "For example:\n\n```"
-    prompt += f"\n### Reddit Story\n```\n{example}\n```\n\n"
+    prompt += f"\n### Reddit Story\n```\n{labeled_story.story.story}\n```\n\n"
     prompt += "\n#### Labeled Sample Text:\n\n"
-    prompt += generate_labeled_text(story_labels)
+    prompt += str(labeled_story)
     prompt += "```\n\n"
     prompt += "\n An accurate and engaging labeling is crucial, as it will be extracted via a script. Consider every line and maintain the formatting consistently. Thank you."
     return prompt
