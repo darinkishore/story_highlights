@@ -126,7 +126,38 @@ def generate_labeled_text(labels):
 #     use the story with the most labels for each category as the example
 #     return the example story in the format below:
 
-def generate_follow_up_prompt(example, example_labels):
+# Adding test cases for generate_follow_up_prompt using LabeledStory instances
+import pytest
+from .models import LabeledStory, Story, Label
+
+
+def test_generate_follow_up_prompt():
+    # Test case: one label
+    markdown_text_one_label = "### Title\n\nThis is a simple story.\n\n#### Labeled Sections:\n\n- **Single Label**: Single excerpt"
+    labeled_story_one_label = LabeledStory.from_markdown(markdown_text_one_label)
+    prompt_one_label = generate_follow_up_prompt(labeled_story_one_label.story.story, labeled_story_one_label.labels)
+    assert "- **Single Label**: \"Single excerpt\"" in prompt_one_label
+
+    # Test case: multiple labels
+    markdown_text_multiple_labels = "### Title\n\nThis is a complex story with multiple elements.\n\n#### Labeled Sections:\n\n- **Opening Label**: Opening excerpt\n- **Continuation Label**: Continuation excerpt\n- **Closing Label**: Closing excerpt"
+    labeled_story_multiple_labels = LabeledStory.from_markdown(markdown_text_multiple_labels)
+    prompt_multiple_labels = generate_follow_up_prompt(labeled_story_multiple_labels.story.story, labeled_story_multiple_labels.labels)
+    assert "- **Opening Label**: \"Opening excerpt\"" in prompt_multiple_labels
+    assert "- **Continuation Label**: \"Continuation excerpt\"" in prompt_multiple_labels
+    assert "- **Closing Label**: \"Closing excerpt\"" in prompt_multiple_labels
+
+    # Test case: no labels
+    markdown_text_no_labels = "### Title\n\nThis story has no labeled sections.\n\n#### Labeled Sections:\n"
+    labeled_story_no_labels = LabeledStory.from_markdown(markdown_text_no_labels)
+    prompt_no_labels = generate_follow_up_prompt(labeled_story_no_labels.story.story, labeled_story_no_labels.labels)
+    assert "Labeled Sample Text" not in prompt_no_labels
+
+
+# Execute the tests for generate_follow_up_prompt
+def execute_tests():
+    pytest.main()
+
+execute_tests()
     prompt = "Thank you for the planning phase! Now, please proceed to label each line as identified, ensuring thoroughness and precision. Don't blindly highlight everything!\n\n"
 
     Args:
