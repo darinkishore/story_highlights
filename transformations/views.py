@@ -11,14 +11,14 @@ def index(request):
     
     
 
+from transformations.src.highlight_ai import label_story
+
 def highlight(request):
-    if request.htmx:
-        if request.method == 'POST':
-            # get text from input field
-            # highlight the text by calling the highlight_text function
-            # from transformations/src/highlight_ai.py
-            # return the html-highlighted text
-            raise NotImplementedError
+    if request.htmx and request.method == 'POST':
+        text_to_highlight = request.POST.get('text_field_name')
+        highlighted_story = label_story(text_to_highlight)
+        # TODO: Apply HTML formatting to the highlighted story
+        return HttpResponse(highlighted_story, content_type='text/html')
             
 
 def edit_1(request):
