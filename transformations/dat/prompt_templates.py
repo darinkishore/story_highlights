@@ -149,5 +149,5 @@ def generate_follow_up_prompt(example, example_labels):
     prompt += "\n#### Labeled Sample Text:\n\n"
     prompt += generate_labeled_text(story_labels)
     prompt += "```\n\n"
-    prompt += "\n An accurate and engaging labeling is crucial, as it will be extracted via a script. Consider every line and maintain the formatting consistently. Thank you."
+    prompt += "\n An accurate and engaging labeling is crucial, as your output will be extracted via exact text matching and put into a TikTok video. Consider every line and maintain the formatting consistently. Thank you."
     return prompt
