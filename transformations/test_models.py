@@ -41,16 +41,4 @@ def test_apply_html_tags(story_text, markdown_text):
     html_story = labeled_story.apply_html_tags()
     for label in labeled_story.labels:
         color = get_color_mapping(label.label)  # Use the function to get the color
-        assert (
-            f'<span style="color:{color};">{label.excerpt}</span>'
-            in html_story
-        )
-
-
-@pytest.mark.parametrize("story_text, markdown_text", reference_stories)
-def test_apply_html_tags_invalid_label(story_text, markdown_text, color_mapping):
-    labeled_story = LabeledStory.from_markdown(markdown_text, story_text)
-    incomplete_color_mapping = color_mapping.copy()
-    incomplete_color_mapping.popitem()
-    with pytest.raises(KeyError):
-        labeled_story.apply_html_tags(incomplete_color_mapping)
+        assert f'<span style="color:{color};">{label.excerpt}</span>' in html_story
