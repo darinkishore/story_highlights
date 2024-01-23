@@ -7,7 +7,7 @@ from transformations.dat.prompt_templates import (characters, descriptions,
                                                   generate_user_prompt,
                                                   plot_elements)
 from transformations.dat.stories_html.reference import stories
-from .prompt_templates import characters, plot_elements, descriptions, generate_label_section, system_prompt
+from .prompt_templates import characters, plot_elements, descriptions, generate_label_section, system_prompt, user_follow_up_prompt, generate_follow_up_prompt
 
 @sgl.function
 def label_story_with_sglang(s, story_text):
@@ -16,27 +16,18 @@ def label_story_with_sglang(s, story_text):
     # Define the categories and their corresponding label dictionaries
     categories = [("Characters", characters), ("Plot Elements", plot_elements), ("Descriptions", descriptions)]
 
-    # Forking to handle multiple categories in parallel
-    forks = s.fork(len(categories))
-
-    # Dynamically select the best examples for each category
-    for f, (category, labels_dict) in zip(forks, categories):
-        f += f"Now, plan the labels for the category: {category}.\n"
-        f += generate_label_section(category, labels_dict) + "\n"
-        f += sgl.gen(f"plan_{category.lower()}", max_tokens=256)
-
-    # Generate the labels for the story text
-    s += f"Now, label the following story:\n\n### Reddit Story\n```\n{story_text}\n```\n\n"
-    s += sgl.gen("labeled_story", max_tokens=1024)
+    # Start with the planning phase
+    s += generate_user_prompt(story_text)
     
-    labeled_story = s["labeled_story"]
-    story_highlights = StoryHighlights.process_story_highlights(labeled_story, story_text)
-    html_formatted_story = story_highlights.apply_html_highlights_to_story()
-
-    # Include the specific output format
-    s += "Please use the format `**Label**: \"Specific excerpt\"`.\n\n"
-
-    return html_formatted_story
+    # Dynamically select the best examples for each category
+    best_examples = {category: find_best_example(labels_dict) for category, labels_dict in categories}
+    
+    # Include the execution phase with examples
+    example_story, example_labels = best_examples["Characters"]  # Assuming Characters as the default example
+    s += generate_follow_up_prompt(example_story, example_labels)
+    
+    # Emphasize the importance of accuracy
+    s += "\nYour detailed and accurate labeling is crucial, as it will be extracted via a script for a TikTok video.\n"
 
 
 
@@ -56,26 +47,4 @@ def find_best_example(category_labels: dict) -> (str, List[Highlight]):
 
 
 # def generate_dynamic_prompts(story_text: str, story_title: str = "Story Title") -> str:
-#     def generate_plan(category_name: str, category_labels: dict) -> str:
-#         return generate_label_section(category_name, category_labels)
-
-    
-
-    # def render_highlights_to_html(story: str, highlights: List[Highlight]) -> str:
-    #     story_highlights = StoryHighlights(story=Story(title=story_title, story=story), highlights=highlights)
-    #     return story_highlights.apply_html_highlights_to_story()
-
-    # with ThreadPoolExecutor() as executor:
-    #     plans = list(executor.map(generate_plan, ["Characters", "Plot Elements", "Descriptions"], [characters, plot_elements, descriptions]))
-    #     examples = list(executor.map(find_best_example, [characters, plot_elements, descriptions]))
-
-    # prompts = [generate_user_prompt(story_text)]
-    # prompts.extend(plans)
-    # for example, example_labels in examples:
-    #     prompts.append(render_highlights_to_html(example, example_labels))
-
-    # return "\n\n".join(prompts)
-
-
-# TODO: get rid of planning stage. intelligently managing examples and instructions should do it.
 
