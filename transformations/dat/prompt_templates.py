@@ -107,13 +107,28 @@ def generate_user_prompt(story):
 
 # PROMPT PART 2: EXAMPLES AND LABELING
 
-# The hardcoded story_labels list is removed as it is no longer needed.
+story_labels = [
+    ("Unknown Role", "You are Death, but in a postapocalyptic world."),
+    ("Positive Time Reference", "Only a few survivors remain,"),
+    ("Positive Description", "and you're doing everything you can to help them"),
+    ("Important Detail", "because if the last human dies, you die as well."),
+    (
+        "Unknown Role",
+        "The survivors can't see you, but they feel your presence and noticed your effort.",
+    ),
+    ("Positive Description", "They started to call you Life."),
+    ("Negative Time Reference", "Five thousand left today on all the Earth."),
+    (
+        "Violence/Danger",
+        "I cut the soul of the five thousand and first not one hour ago.",
+    ),
+]
 
 
-def generate_labeled_text(labels):
+def generate_labeled_text(story_labels):
     labeled_text = "#### Labeled Sample Text:\n\n"
-    for label in labels:
-        labeled_text += f'- **{label.label}**: "{label.excerpt}"\n'
+    for excerpt, label in story_labels:
+        labeled_text += f'- **{label}**: "{excerpt}"\n'
     return labeled_text
 
 
@@ -126,53 +141,8 @@ def generate_labeled_text(labels):
 #     use the story with the most labels for each category as the example
 #     return the example story in the format below:
 
-# Adding test cases for generate_follow_up_prompt using LabeledStory instances
-import pytest
-from .models import LabeledStory, Story, Label
-
-
-def test_generate_follow_up_prompt():
-    # Test case: one label
-    markdown_text_one_label = "### Title\n\nThis is a simple story.\n\n#### Labeled Sections:\n\n- **Single Label**: Single excerpt"
-    labeled_story_one_label = LabeledStory.from_markdown(markdown_text_one_label)
-    prompt_one_label = generate_follow_up_prompt(labeled_story_one_label.story.story, labeled_story_one_label.labels)
-    assert "- **Single Label**: \"Single excerpt\"" in prompt_one_label
-
-    # Test case: multiple labels
-    markdown_text_multiple_labels = "### Title\n\nThis is a complex story with multiple elements.\n\n#### Labeled Sections:\n\n- **Opening Label**: Opening excerpt\n- **Continuation Label**: Continuation excerpt\n- **Closing Label**: Closing excerpt"
-    labeled_story_multiple_labels = LabeledStory.from_markdown(markdown_text_multiple_labels)
-    prompt_multiple_labels = generate_follow_up_prompt(labeled_story_multiple_labels.story.story, labeled_story_multiple_labels.labels)
-    assert "- **Opening Label**: \"Opening excerpt\"" in prompt_multiple_labels
-    assert "- **Continuation Label**: \"Continuation excerpt\"" in prompt_multiple_labels
-    assert "- **Closing Label**: \"Closing excerpt\"" in prompt_multiple_labels
-
-    # Test case: no labels
-    markdown_text_no_labels = "### Title\n\nThis story has no labeled sections.\n\n#### Labeled Sections:\n"
-    labeled_story_no_labels = LabeledStory.from_markdown(markdown_text_no_labels)
-    prompt_no_labels = generate_follow_up_prompt(labeled_story_no_labels.story.story, labeled_story_no_labels.labels)
-    assert "Labeled Sample Text" not in prompt_no_labels
-
-
-# Execute the tests for generate_follow_up_prompt
-def execute_tests():
-    pytest.main()
-
-execute_tests()
+def generate_follow_up_prompt(example, example_labels):
     prompt = "Thank you for the planning phase! Now, please proceed to label each line as identified, ensuring thoroughness and precision. Don't blindly highlight everything!\n\n"
-
-    Args:
-        labeled_story (LabeledStory): A LabeledStory object containing the story and labels to be used in the prompt.
-
-    Returns:
-        str: A formatted prompt string with dynamically generated labeled text based on the LabeledStory object.
-    """
-    prompt = "Thank you for the planning phase! Now, please proceed to label each line as identified, ensuring thoroughness and precision. Don't blindly highlight everything!\n\n"
-    prompt += 'Please use the format `**Label**: "Specific excerpt"`.\n\n'
-    prompt += "For example:\n\n```"
-    prompt += f"\n### Reddit Story\n```\n{labeled_story.story.story}\n```\n\n"
-    prompt += "\n#### Labeled Sample Text:\n\n"
-    prompt += generate_labeled_text([(label.label, label.excerpt) for label in labeled_story.labels])
-    prompt += "```\n\n"
     prompt += 'Please use the format `**Label**: "Specific excerpt"`.\n\n'
     prompt += "For example:\n\n```"
     prompt += f"\n### Reddit Story\n```\n{example}\n```\n\n"
@@ -180,6 +150,4 @@ execute_tests()
     prompt += generate_labeled_text(story_labels)
     prompt += "```\n\n"
     prompt += "\n An accurate and engaging labeling is crucial, as your output will be extracted via exact text matching and put into a TikTok video. Consider every line and maintain the formatting consistently. Thank you."
-    return prompt
-    prompt += "\n An accurate and engaging labeling is crucial, as it will be extracted via a script. Consider every line and maintain the formatting consistently. Thank you."
     return prompt
