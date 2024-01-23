@@ -5,16 +5,25 @@ from transformations.dat.models import Highlight, Story, StoryHighlights
 from transformations.dat.prompt_templates import (characters, descriptions,
                                                   generate_label_section,
                                                   generate_user_prompt,
-                                                  plot_elements)
+                                                  plot_elements,
+                                                  user_follow_up_prompt)
 from transformations.dat.stories_html.reference import stories
-from .prompt_templates import characters, plot_elements, descriptions, generate_label_section, system_prompt
+from .prompt_templates import characters, plot_elements, descriptions, generate_label_section, system_prompt, generate_labeled_text
 
 @sgl.function
 def label_story_with_sglang(s, story_text):
-    s += sgl.system(system_prompt)  # Include the system prompt
+    s += system_prompt  # Include the system prompt as the role definition
 
+    # Include the user prompt with labeling rules and planning phase
+    s += generate_user_prompt(story_text)
+    # Include the labeling format and emphasize the importance of accuracy
+    s += user_follow_up_prompt
     # Define the categories and their corresponding label dictionaries
     categories = [("Characters", characters), ("Plot Elements", plot_elements), ("Descriptions", descriptions)]
+    # Dynamically generate examples for each label category
+    for category, labels_dict in categories:
+        example, example_labels = find_best_example(labels_dict)
+        s += generate_labeled_text(example, example_labels)
 
     # Forking to handle multiple categories in parallel
     forks = s.fork(len(categories))
