@@ -7,7 +7,6 @@ from flashtext import KeywordProcessor
 
 
 class Story(BaseModel):
-    title: str
     story: str
 
 
@@ -41,12 +40,15 @@ class StoryHighlights(BaseModel):
         # Update the regex pattern to handle nested quotations
         label_pattern = re.compile(r'- \*\*(.*?)\*\*: "(.*?)"(?=\s|$)')
         highlights_list = []
-
+    def __init__(self, story: str):
+        lines = story.split('\n', 1)
+        self.title = lines[0]
+        self.story = lines[1] if len(lines) > 1 else ''
         for match in label_pattern.finditer(raw_highlight_response):
             label, excerpt = match.groups()
             highlights_list.append(Highlight(label=label, excerpt=excerpt))
 
-        story = Story(title=story_title, story=story_text)
+        story = Story(story=story_text)
         return cls(story=story, highlights=highlights_list)
 
     def apply_html_highlights_to_story(self):
@@ -71,7 +73,7 @@ class StoryHighlights(BaseModel):
         labeled_text = "\n".join(str(highlight.label) for highlight in self.highlights)
 
         return f"""### Reddit Story\n
-        {self.story.title}\n
+        {self.story.title.strip()}\n  # Ensure title has no leading/trailing whitespace
         {self.story.story}\n\n
         #### Labeled Text:\n\n
         {labeled_text}
