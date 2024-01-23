@@ -5,11 +5,8 @@ import openai
 from typing import List
 import os
 from dotenv import load_dotenv
-from ..dat.prompt_templates import (
-    system_prompt,
-    generate_user_prompt,
-    user_follow_up_prompt,
-)
+from ..dat.prompt_templates import system_prompt, generate_user_prompt, user_follow_up_prompt
+from .sglang_templates import label_story_with_sglang
 
 
 load_dotenv()
@@ -26,11 +23,8 @@ def get_prompt_part2():
 
 
 def kickstart(story: str = ""):
-    prompt1 = get_prompt_part1(story)
-    prompt2 = get_prompt_part2()
-    message_list = generate(prompt1)
-    message_list = generate(prompt2, message_history=message_list)
-    return message_list
+    html_formatted_story = label_story_with_sglang.run(story_text=story)
+    return html_formatted_story
 
 
 def generate(prompt: str, max_tokens: int = 500, message_history: List[dict] = []):
