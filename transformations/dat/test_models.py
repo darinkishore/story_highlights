@@ -1,6 +1,6 @@
 import pytest
 from transformations.dat.models import Highlight, StoryHighlights, Story, re
-from transformations.dat.stories_html.reference import reference_stories
+from transformations.dat.reference_stories.reference import reference_stories
 from transformations.dat.colors import get_color_mapping  # Import the function
 
 
@@ -29,6 +29,17 @@ def test_num_labels_accurate(story_text, raw_highlights):
         raw_highlights, story_text
     )
     assert len(story_highlights.highlights) == num_highlights
+
+
+@pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
+def test_highlight_model_instantiation(story_text, raw_highlights):
+    label_pattern = re.compile(r'- \*\*(.*?)\*\*: "(.*?)"(?=\s|$)')
+    for match in label_pattern.finditer(raw_highlights):
+        label_text, excerpt_text = match.groups()
+        highlight = Highlight(label=label_text, excerpt=excerpt_text)
+        assert highlight.label == label_text
+        assert highlight.excerpt == excerpt_text
+        assert highlight.color is None or isinstance(highlight.color, str)
 
 
 @pytest.mark.parametrize("story_text, markdown_text", reference_stories)
