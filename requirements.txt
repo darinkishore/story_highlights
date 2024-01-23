@@ -1,7 +1,7 @@
 Django
 openai
 python-dotenv
-Pydantic
+pydantic==2.5.3
 requests
 spacy
 flashtext
@@ -9,3 +9,4 @@ django-htmx
 pytest
 pytest-django
 rapidfuzz
+sglang[openai]
