@@ -7,8 +7,14 @@ from flashtext import KeywordProcessor
 
 
 class Story(BaseModel):
-    title: str
     story: str
+
+    def __init__(self, story: str, **data: Any):
+        super().__init__(story=story, **data)
+        story_lines = story.split('\n', 1)
+        self.title = story_lines[0] if story_lines else ''
+        if len(story_lines) > 1:
+            self.story = story_lines[1]
 
 
 class Highlight(BaseModel):
@@ -46,7 +52,7 @@ class StoryHighlights(BaseModel):
             label, excerpt = match.groups()
             highlights_list.append(Highlight(label=label, excerpt=excerpt))
 
-        story = Story(title=story_title, story=story_text)
+        story = Story(story=story_text)
         return cls(story=story, highlights=highlights_list)
 
     def apply_html_highlights_to_story(self):
