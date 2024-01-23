@@ -18,15 +18,15 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 def get_prompt_part1(story):
-    return generate_user_prompt(story)
+    return system_prompt + '\n' + generate_user_prompt(story)
 
 
 def get_prompt_part2():
-    return user_follow_up_prompt
+    return user_follow_up_prompt + '\n' + system_prompt
 
 
 def kickstart(story: str = ""):
-    prompt1 = get_prompt_part1(story)
+    prompt1 = system_prompt + get_prompt_part1(story)
     prompt2 = get_prompt_part2()
     message_list = generate(prompt1)
     message_list = generate(prompt2, message_history=message_list)
