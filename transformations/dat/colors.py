@@ -1,4 +1,4 @@
-import random
+import rapidfuzz
 
 # TODO: question: how handle bold?
 
@@ -29,23 +29,35 @@ color_mappings = {
     "Water-Related Description": "#6fa8dc",
 }
 
+color_set = set(color_mappings.keys())
+
+
 def get_color_mapping(key):
-    discretion_threshold = 0.5  # 50% probability
     # if its other male or other female > 3 then subtract 3
-    if "Male" in key or "Female" in key and "Main" not in key:
+    if key[-1].isdigit():
         ind = int(key[-1])
         if ind > 3:
             key = "Other Male" if "Other Male" in key else "Other Female"
             key = f"{key} {ind - 3}"
-    
     try:
         color = color_mappings[key]
     except KeyError:
-        raise KeyError(f"Label {key} not found in color mapping.")
+        # use levenshtein distance to find the closest match
+        closest_match = rapidfuzz.process.extractOne(
+            key,
+            color_set,
+            score_cutoff=2,
+            scorer=rapidfuzz.distance.Levenshtein.distance,
+        )
+        if closest_match is None:
+            raise KeyError(f"Label {key} not found in color mapping.")
+        else:
+            color = color_mappings[closest_match[0]]
     return color
 
+
 def get_reverse_color_mapping(value):
-    reverse_map =  {v: k for k, v in color_mappings.items()}
+    reverse_map = {v: k for k, v in color_mappings.items()}
     try:
         key = reverse_map[value]
     except KeyError:

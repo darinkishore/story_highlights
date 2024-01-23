@@ -1,6 +1,6 @@
-
 reference_stories = [
-    (r"""Present-day 2038, “Net Neutrality” has been unalived for almost two decades. A small rebel group travels back to 2017 to try and change it all…
+    (
+        r"""Present-day 2038, “Net Neutrality” has been unalived for almost two decades. A small rebel group travels back to 2017 to try and change it all…
 
 Just as Donald was about to press the button that would trigger the bomb - the one that would level the FCC headquarters - he heard a voice.
 
@@ -17,7 +17,8 @@ Donald hesitated, wondering if this was one of those illegal aliens people talke
 Donald whirled around, expecting to see little grey men or green sludge monsters. The sight that greeted him was significantly more perplexing. Three men, well dressed, well-armed (at least Donald assumed the things they were pointing at him were weapons), and one of them carried something that he had never seen before - a smallish rectangular object which had moving pictures on the top face - the person holding it was jabbing at it and running his fingers across the images.
 
 The first voice spoke again - coming from the closest man, who waved his 'gun' to get Donald's attention. "For the last time, put down tha bloomin' trigga!"
-    """, r"""#### Labeled Sections
+    """,
+        r"""#### Labeled Sections
 
 - **Negative Time Reference**: "Present-day 2038,"
 - **Antagonist/Villain**: "“Net Neutrality” has been unalived"
@@ -76,9 +77,10 @@ The first voice spoke again - coming from the closest man, who waved his 'gun' t
 - **Important Information**: "who waved his"
 - **Danger/Violence**: "'gun'"
 - **Main Male Character**: "to get Donald's attention."
-- **Other Male 2**: ""For the last time, put down tha bloomin' trigga!""
+- **Male Character 2**: ""For the last time, put down tha bloomin' trigga!""
 
-    """),
+    """,
+    ),
     (
         r"""
         So, your typical college girl lookalike but for the number above her head.
@@ -192,7 +194,7 @@ She snorted. "Really? We're still not over this?"
 
 - **Main Female Character**: "Really? We're still not over this?"
 
-        """
+        """,
     ),
     (
         r"""Harry strode forward as the two collapsed before him. The pair of Death Eaters had been trying to take him by surprise. But years of living under the Dursley's torment, coupled with his time as a Seeker, had left his senses honed for even the smallest of disturbances. They would have been better off running. At least then, Harry would have been able to enjoy hunting them down.
@@ -322,7 +324,6 @@ Right at that moment, Nagini slid across the floor. As it was making its way to 
 - **Main Male Character**: "Harry,"
 - **Main Male Character**: "the boy wizard"
 - **Danger/Violence**: "unalived it."
-        """
-    )
+        """,
+    ),
 ]
-
