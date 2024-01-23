@@ -44,18 +44,20 @@ class LabeledStory(BaseModel):
 
     def apply_html_tags(self):
         from transformations.dat.colors import get_color_mapping
-        keyword_processor = KeywordProcessor()
-        for label in self.labels:
+        # Initialize an empty HTML story
+        html_story = self.story.story
+        # Sort labels by the start index of their excerpts in descending order
+        sorted_labels = sorted(self.labels, key=lambda label: html_story.find(label.excerpt), reverse=True)
+        for label in sorted_labels:
             try:
                 color = get_color_mapping(label.label)
             except KeyError as e:
                 raise KeyError(f"Label {label.label} not found in color mapping.") from e
+            # Replace the excerpt with the HTML tag
             html_tag = f'<span style="color:{color};">{label.excerpt}</span>'
-            keyword_processor.add_keyword(label.excerpt, html_tag)
-
-        html_story = keyword_processor.replace_keywords(self.story.story)
-
-        return html_story
+            html_story = html_story.replace(label.excerpt, html_tag, 1)
+        self.html_story = html_story
+        return self.html_story
 
     def __str__(self):
         labeled_text = "\n".join(str(label) for label in self.labels)
