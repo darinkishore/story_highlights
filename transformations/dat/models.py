@@ -38,8 +38,7 @@ class StoryHighlights(BaseModel):
     def process_story_highlights(
         cls,
         raw_highlight_response: str,
-        story_text: str,
-        story_title: str = "Story Title",
+        story_text: str
     ):
         # Update the regex pattern to handle nested quotations
         label_pattern = re.compile(r'- \*\*(.*?)\*\*: "(.*?)"(?=\s|$)')
@@ -49,7 +48,7 @@ class StoryHighlights(BaseModel):
             label, excerpt = match.groups()
             highlights_list.append(Highlight(label=label, excerpt=excerpt))
 
-        story = Story(title=story_title, story=story_text)
+        story = Story(story=story_text)
         return cls(story=story, highlights=highlights_list)
 
     def apply_html_highlights_to_story(self):
