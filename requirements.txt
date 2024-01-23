@@ -6,3 +6,5 @@ requests
 spacy
 pysubstringsearch
 django-htmx
+pytest
+pytest-django
