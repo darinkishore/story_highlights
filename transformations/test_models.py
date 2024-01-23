@@ -1,6 +1,7 @@
 import pytest
 from transformations.dat.models import Highlight, StoryHighlights, Story, re
 from transformations.dat.stories_html.reference import reference_stories
+from transformations.dat.prompt_templates import generate_follow_up_prompt
 from transformations.dat.colors import get_color_mapping  # Import the function
 
 
@@ -28,6 +29,16 @@ def test_labeled_story_from_markdown(story_text, markdown_text):
     assert len(labeled_story.highlights) == len(
         list(re.finditer(r'- \*\*(.*?)\*\*: "(.*?)"(?=\s|$)', markdown_text))
     )
+
+
+@pytest.mark.parametrize("story_text, markdown_text", reference_stories)
+def test_generate_follow_up_prompt(story_text, markdown_text):
+    example, example_labels = story_text, markdown_text
+    result_prompt = generate_follow_up_prompt(example, example_labels)
+    assert 'Thank you for the planning phase!' in result_prompt
+    assert 'Please proceed to label each line as identified' in result_prompt
+    assert '#### Labeled Sample Text:' in result_prompt
+    # Further assertions to validate content and format can be added here
 
 
 @pytest.mark.parametrize("story_text, markdown_text", reference_stories)
