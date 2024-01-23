@@ -1,6 +1,6 @@
 from typing import List, Any
 import rapidfuzz
-from pydantic import BaseModel
+from pydantic import BaseModel, validator, model_validator
 import re
 from flashtext import KeywordProcessor
 
@@ -11,8 +11,20 @@ from transformations.dat.colors import color_set, get_color_mapping
 
 
 class Story(BaseModel):
-    title: str
+    title: str = None
     story: str
+
+    @model_validator(mode="before")
+    def gen_title(cls, data):
+        # look for the very first line break in the story, return the text before it, and modify the original story to remove the title
+        if data.get("title") is not None and data("title").strip() != "Test Story":
+            return data
+        else:
+            data["story"] = data["story"].strip()
+            title = data["story"].split("\n")[0].strip()
+            data["title"] = title
+            data["story"] = data["story"].replace(title, "", 1).strip()
+            return data
 
 
 class Highlight(BaseModel):
