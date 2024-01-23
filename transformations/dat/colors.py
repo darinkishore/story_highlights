@@ -29,8 +29,6 @@ color_mappings = {
     "Water-Related Description": "#6fa8dc",
 }
 
-color_set = set(color_mappings.keys())
-
 
 def get_color_mapping(key):
     # if its other male or other female > 3 then subtract 3
