@@ -5,6 +5,7 @@ import re
 import pysubstringsearch as psss
 import os
 import snoop
+from flashtext import KeywordProcessor
 
 # Define the Pydantic models
 
@@ -64,21 +65,63 @@ class LabeledStory(BaseModel):
         story = Story(title=story_title, story=story_text)
         return cls(story=story, labels=labels)
 
-    def apply_html_tags(self, color_mapping):
-        html_story = self.story.story
+    def find_all_matches(self):
+        reader = psss.Reader(index_file_path=self.story.substring_file_path)
+        matches = {}
+        for label in self.labels:
+            excerpt = label.excerpt.strip('"')
+            matches[excerpt] = reader.search(excerpt)
+        return matches
 
+    def resolve_ties(self, matches):
+        # TODO: Implement proximity-based tie-breaking logic
+        raise NotImplementedError
+
+    def apply_html_tags_keywords(self):
+        from transformations.dat.colors import get_color_mapping
+        keyword_processor = KeywordProcessor()
         for label in self.labels:
             try:
-                color = color_mapping[label.label]
+                color = get_color_mapping(label.excerpt)
             except KeyError:
-                raise KeyError(f"Label {label.label} not found in color mapping.")
-
+                color = "#000000"  # Default to black if color mapping not found
             html_tag = f'<span style="color:{color};">{label.excerpt}</span>'
-            escaped_excerpt = re.escape(label.excerpt.strip('"'))
-            pattern = rf"(\b|\s|^)({escaped_excerpt})(\b|\s|$)"
-            html_story = re.sub(pattern, r"\1" + html_tag + r"\3", html_story)
+            keyword_processor.add_keyword(label.excerpt, html_tag)
+
+        html_story = keyword_processor.replace_keywords(self.story.story)
 
         return html_story
+
+    def apply_html_tags(self):
+        from transformations.dat.colors import get_color_mapping
+        keyword_processor = KeywordProcessor()
+        for label in self.labels:
+            try:
+                color = get_color_mapping(label.label)
+            except KeyError as e:
+                raise KeyError(f"Label {label.label} not found in color mapping.") from e
+            html_tag = f'<span style="color:{color};">{label.excerpt}</span>'
+            keyword_processor.add_keyword(label.excerpt, html_tag)
+
+        html_story = keyword_processor.replace_keywords(self.story.story)
+
+        return html_story
+
+    # def apply_html_tags(self, color_mapping):
+    #     html_story = self.story.story
+    #
+    #     for label in self.labels:
+    #         try:
+    #             color = color_mapping[label.label]
+    #         except KeyError:
+    #             raise KeyError(f"Label {label.label} not found in color mapping.")
+    #
+    #         html_tag = f'<span style="color:{color};">{label.excerpt}</span>'
+    #         escaped_excerpt = re.escape(label.excerpt.strip('"'))
+    #         pattern = rf"(\b|\s|^)({escaped_excerpt})(\b|\s|$)"
+    #         html_story = re.sub(pattern, r"\1" + html_tag + r"\3", html_story)
+    #
+    #     return html_story
 
     def __str__(self):
         labeled_text = "\n".join(str(label) for label in self.labels)
@@ -104,30 +147,3 @@ class HTMLStory(BaseModel):
             excerpt = label.excerpt.strip('"')
             matches[excerpt] = reader.search(excerpt)
         return matches
-
-    def resolve_ties(self, matches):
-        # TODO: Implement proximity-based tie-breaking logic
-        raise NotImplementedError
-
-    def apply_html_tags(self, color_mapping):
-        html_story = self.story.story
-        all_matches = self.find_all_matches()
-
-        for label in self.labels:
-            excerpt = label.excerpt.strip('"')
-            match_positions = all_matches[excerpt]
-
-            if len(match_positions) > 1:
-                chosen_match = self.resolve_ties(match_positions)
-            else:
-                chosen_match = match_positions[0] if match_positions else None
-
-            if chosen_match:
-                color = color_mapping.get(label.label, "#000000")
-                html_tag = f'<span style="color:{color};">{label.excerpt}</span>'
-                pattern = re.escape(chosen_match)
-                html_story = re.sub(
-                    pattern, html_tag, html_story, 1
-                )  # Apply the tag only to the chosen match
-
-        return html_story
