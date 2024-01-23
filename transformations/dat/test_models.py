@@ -31,18 +31,13 @@ def test_story_is_not_empty(story_text, raw_highlights):
 @pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
 def test_total_story_length_is_same(story_text, raw_highlights):
     story = Story(story=story_text)
-    print(story)
-    # make sure lens are same within absolute diff of 4
     abs_diff = 4
-    assert (
-        abs(
-            len(story_text.strip())
-            - len(story.title.strip())
-            - len(story.story.strip())
-        )
-        <= abs_diff
-    ), f"Expected Len: {len(story_text.strip())}, Title length: {len(story.title.strip())}, Story length: {len(story.story.strip())}, Actual Len: {len(story.title.strip()) + len(story.story.strip())}"
-
+    assert abs(
+        len(story_text.strip())
+        - (len(story.title.strip()) + 
+           len(story.story.strip()))
+    ) <= abs_diff
+    
 
 @pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
 def test_label_model_instantiation(story_text, raw_highlights):
