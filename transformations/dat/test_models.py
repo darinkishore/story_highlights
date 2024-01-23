@@ -6,9 +6,34 @@ from transformations.dat.colors import get_color_mapping  # Import the function
 
 @pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
 def test_story_model_instantiation(story_text, raw_highlights):
-    story = Story(title="Test Story", story=story_text)
-    assert story.title == "Test Story"
-    assert story.story == story_text
+    story = Story(story=story_text)
+    assert story is not None
+
+
+@pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
+def test_story_title_is_first_line(story_text, raw_highlights):
+    story = Story(story=story_text)
+    assert story_text.strip().split("\n")[0] == story.title
+
+
+@pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
+def test_story_title_removed_from_story(story_text, raw_highlights):
+    story = Story(story=story_text)
+    assert story.title not in story.story
+
+
+@pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
+def test_story_is_not_empty(story_text, raw_highlights):
+    story = Story(story=story_text)
+    assert story.story != ""
+
+
+@pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
+def test_total_story_length_is_same(story_text, raw_highlights):
+    story = Story(story=story_text)
+    assert (
+        len(story_text) == len(story.title) + len(story.story) + 1
+    )  # +1 for the newline character
 
 
 @pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
