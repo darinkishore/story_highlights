@@ -6,12 +6,7 @@ rules:
   - "All new business logic should have corresponding unit tests using Pytest."
   - "Refactor large functions to be more modular."
   - "All leftover TODOs in the codebase should be resolved."
-  - "Ensure all HTML generation uses safe string substitution to prevent injection attacks."
-  - "HTMX should be used for all AJAX requests."
-  - "All client-side reactivity should be handled by Alpine.js."
-  - "Follow the DRY (Don't Repeat Yourself) principle, especially in template generation and HTML styling."
-  - "All frontend functionality should at least have placeholder code in the backend."
-
+  - "All code should be documented."
 
 # This is the branch that Sweep will develop from and make pull requests to. Most people use 'main' or 'master' but some users also use 'dev' or 'staging'.
 branch: 'main'
