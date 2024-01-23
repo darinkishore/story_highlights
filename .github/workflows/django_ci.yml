@@ -26,4 +26,4 @@ jobs:
       run: python manage.py check
 
     - name: Run tests
-      run: python manage.py test
+      run: pytest
