@@ -5,6 +5,8 @@ import openai
 from typing import List
 import os
 from dotenv import load_dotenv
+from transformations.src.sglang_templates import generate_dynamic_prompts
+from transformations.dat.models import render_highlights_to_html
 from ..dat.prompt_templates import (
     system_prompt,
     generate_user_prompt,
@@ -25,11 +27,9 @@ def get_prompt_part2():
     return user_follow_up_prompt
 
 
-def kickstart(story: str = ""):
-    prompt1 = get_prompt_part1(story)
-    prompt2 = get_prompt_part2()
-    message_list = generate(prompt1)
-    message_list = generate(prompt2, message_history=message_list)
+def kickstart(story: str = "", story_title: str = "Story Title"):
+    prompts = generate_dynamic_prompts(story, story_title)
+    message_list = generate(prompts)
     return message_list
 
 
@@ -74,8 +74,9 @@ def get_last(message_history: List[dict]):
     return message_history[-1]["content"]
 
 
-def label_story(story: str):
-    _ = kickstart(story)
-    highlight_schema = get_last(_)
-    # TODO: Apply HTML formatting to the labeled story
-    return highlight_schema
+def label_story(story: str, story_title: str = "Story Title"):
+    prompts = generate_dynamic_prompts(story, story_title)
+    message_history = generate(prompts)
+    highlight_schema = get_last(message_history)
+    formatted_story = render_highlights_to_html(story, highlight_schema)
+    return formatted_story
