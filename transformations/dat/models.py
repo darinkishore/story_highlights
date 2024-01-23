@@ -1,7 +1,11 @@
 from typing import List, Any
+import rapidfuzz
 from pydantic import BaseModel
 import re
 from flashtext import KeywordProcessor
+
+from transformations.dat.colors import color_set, get_color_mapping
+
 
 # Define the Pydantic models
 
@@ -26,9 +30,9 @@ class StoryHighlights(BaseModel):
     html_story: str = None
 
     def to_markdown(self) -> str:
-        markdown_text = f'### {self.story.title}\n\n{self.story.story}\n\n#### Labeled Sections:\n\n'
+        markdown_text = f"### {self.story.title}\n\n{self.story.story}\n\n#### Labeled Sections:\n\n"
         for label in self.labels:
-            markdown_text += str(label) + '\n'
+            markdown_text += str(label) + "\n"
         return markdown_text
 
     @classmethod
@@ -44,6 +48,20 @@ class StoryHighlights(BaseModel):
 
         for match in label_pattern.finditer(raw_highlight_response):
             label, excerpt = match.groups()
+            try:
+                # This will raise a KeyError if the label doesn't exist in the color mappings
+                get_color_mapping(label)
+            except KeyError:
+                # If the label doesn't exist, find the closest match and replace the label with that
+                closest_match = rapidfuzz.process.extractOne(
+                    label,
+                    color_set,
+                    score_cutoff=2,
+                    scorer=rapidfuzz.distance.Levenshtein.distance,
+                )
+                if closest_match is not None:
+                    label = closest_match[0]
+
             highlights_list.append(Highlight(label=label, excerpt=excerpt))
 
         story = Story(title=story_title, story=story_text)
