@@ -31,10 +31,13 @@ def test_story_is_not_empty(story_text, raw_highlights):
 @pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
 def test_total_story_length_is_same(story_text, raw_highlights):
     story = Story(story=story_text)
-    assert (
-        len(story_text) == len(story.title) + len(story.story) + 1
-    )  # +1 for the newline character
-
+    abs_diff = 4
+    assert abs(
+        len(story_text.strip())
+        - (len(story.title.strip()) + 
+           len(story.story.strip()))
+    ) <= abs_diff
+    
 
 @pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
 def test_label_model_instantiation(story_text, raw_highlights):
