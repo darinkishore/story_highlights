@@ -1,6 +1,7 @@
 import pytest
 from transformations.dat.models import Highlight, StoryHighlights, Story, re
 from transformations.dat.stories_html.reference import reference_stories
+from transformations.dat.prompt_templates import generate_follow_up_prompt
 from transformations.dat.label_statistics import get_label_statistics
 from transformations.dat.colors import get_color_mapping  # Import the function
 
@@ -49,6 +50,21 @@ def test_get_label_statistics(story_text, markdown_text):
     # Handling edge case when no labels are present
     if not markdown_text.strip():
         assert not label_stats, "Label statistics should be empty if there are no labels."
+
+@pytest.mark.parametrize("story_text, markdown_text", reference_stories)
+def test_generate_follow_up_prompt(story_text, markdown_text):
+    # Assuming example_story_labels is a list of tuples containing label categories and their corresponding
+    # example stories, e.g., [("Characters", "Some character story example"), ...]
+    example_story_labels = [("Characters", story_text)]
+    prompt = generate_follow_up_prompt(story_text, example_story_labels)
+    for label_category, example in example_story_labels:
+        assert f'**{label_category}**: "{example}"' in prompt, "The prompt should contain the example story for the label category"
+
+    # Handling edge cases
+    if not example_story_labels:
+        assert 'No examples available.' in prompt, "The prompt should indicate when no examples are available."
+    if len(example_story_labels) > 1:
+        assert 'Consider all categories.' in prompt, "The prompt should advise considering all categories when multiple labels are present."
 
 @pytest.mark.parametrize("story_text, markdown_text", reference_stories)
 def test_apply_html_tags(story_text, markdown_text):
