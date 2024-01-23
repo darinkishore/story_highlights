@@ -132,13 +132,32 @@ def generate_labeled_text(story_labels):
     return labeled_text
 
 
-# TODO: use the models in .models.py to dynamically provide examples for each category of labels.
-# pseudocode:
-# for category in categories: (ie: characters, plot elements, descriptions)
-#     go through each reddit story in the samples, in stories_html.reference.py
-#     for each story, read those into the pydantic models in .models.py
-#     get stats on label counts for all the stories
-#     use the story with the most labels for each category as the example
+# Implemented method to dynamically generate examples for each category of labels using models.py
+from transformations.dat.stories_html.reference import stories as reference_stories
+from transformations.dat.models import Story, StoryHighlights
+
+best_examples = {}
+
+# Iterate through the categories and process stories to find the best example
+for category in [characters, plot_elements, descriptions]:
+    label_counts = {}
+    for story_data in reference_stories:
+        story_model = Story(title=story_data["title"], story=story_data["story"])
+        story_highlights = StoryHighlights(story=story_model, highlights=story_data["highlights"])
+        for highlight in story_highlights.highlights:
+            if highlight.label in category:
+                label_counts[story_model.title] = label_counts.get(story_model.title, 0) + 1
+    best_story_title = max(label_counts, key=label_counts.get)
+    best_story_data = next(item for item in reference_stories if item["title"] == best_story_title)
+    best_story_model = Story(title=best_story_data["title"], story=best_story_data["story"])
+    best_examples[category] = StoryHighlights(story=best_story_model, highlights=best_story_data["highlights"])
+
+# Format examples using generate_labeled_text function
+for category, story_highlights in best_examples.items():
+    story_highlights.apply_html_highlights_to_story()
+    example_formatted = generate_labeled_text(story_highlights.highlights)
+    # Include examples in follow-up prompt
+    user_follow_up_prompt += f"\n\n### Example for {category} Labels:\n" + example_formatted
 #     return the example story in the format below:
 
 def generate_follow_up_prompt(example, example_labels):
