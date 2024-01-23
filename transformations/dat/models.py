@@ -7,8 +7,11 @@ from flashtext import KeywordProcessor
 
 
 class Story(BaseModel):
-    title: str
+
     story: str
+
+    def get_title_from_story(self) -> str:
+        return self.story.split('\n', 1)[0]
 
 
 class Highlight(BaseModel):
