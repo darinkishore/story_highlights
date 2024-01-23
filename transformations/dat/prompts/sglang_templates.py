@@ -1,14 +1,6 @@
 import sglang as sgl
-from concurrent.futures import ThreadPoolExecutor
 from typing import List
-from transformations.dat.models import Highlight, Story, StoryHighlights
-from transformations.dat.prompt_templates import (
-    characters,
-    descriptions,
-    generate_label_section,
-    generate_user_prompt,
-    plot_elements,
-)
+from transformations.dat.models import Highlight, StoryHighlights
 from transformations.dat.reference_stories.reference import stories
 from .prompt_templates import (
     characters,
