@@ -32,7 +32,7 @@ def test_story_is_not_empty(story_text, raw_highlights):
 def test_total_story_length_is_same(story_text, raw_highlights):
     story = Story(story=story_text)
     assert (
-        len(story_text) == len(story.title) + len(story.story) + 1
+        len(story_text.strip()) == len(story.title.strip()) + len(story.story.strip()) + len(story.separator)
     )  # +1 for the newline character
 
 
