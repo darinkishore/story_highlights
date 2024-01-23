@@ -4,7 +4,8 @@ python-dotenv
 Pydantic
 requests
 spacy
-pysubstringsearch
+flashtext
 django-htmx
 pytest
 pytest-django
+rapidfuzz
