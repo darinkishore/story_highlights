@@ -1,4 +1,15 @@
 import pytest
+@pytest.mark.parametrize("story_text, expected_title", [
+    ("Title line\nStory body", "Title line"),
+    ("Story with no newline", "Story with no newline"),
+    ("  \nTitle after blank line", "Title after blank line"),
+    ("Leading whitespace  title  ", "Leading whitespace  title"),
+    ("\nOnly newline character", ""),
+    ("\n\nMultiple newlines before title\nTitle line", "Title line")
+])
+def test_story_first_line_title(story_text, expected_title):
+    story = Story(story=story_text)
+    assert story.get_title_from_story() == expected_title
 from transformations.dat.models import Highlight, StoryHighlights, Story, re
 from transformations.dat.stories_html.reference import reference_stories
 from transformations.dat.colors import get_color_mapping  # Import the function
@@ -6,8 +17,8 @@ from transformations.dat.colors import get_color_mapping  # Import the function
 
 @pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
 def test_story_model_instantiation(story_text, raw_highlights):
-    story = Story(title="Test Story", story=story_text)
-    assert story.title == "Test Story"
+    story = Story(story=story_text)
+    assert story.get_title_from_story() == story_text.split('\n', 1)[0].strip()
     assert story.story == story_text
 
 
