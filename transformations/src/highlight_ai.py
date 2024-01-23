@@ -20,12 +20,10 @@ def get_prompt_part1(story):
 def get_prompt_part2():
     return user_follow_up_prompt
 
-def kickstart(story: str = ""):
-    prompt1 = get_prompt_part1(story)
-    prompt2 = get_prompt_part2()
-    message_list = generate(prompt1)
-    message_list = generate(prompt2, message_history=message_list)
-    return message_list
+def kickstart(story: str, story_title: str):
+    # Call to the new SGLang function from transformations/dat/sglang_templates
+    from .sglang_templates import generate_labeling_prompts
+    return generate_labeling_prompts.run(story_text=story, story_title=story_title)
 
 def generate(prompt: str, max_tokens: int = 500, message_history: List[dict] = []):
     try:
@@ -56,8 +54,12 @@ def generate(prompt: str, max_tokens: int = 500, message_history: List[dict] = [
 def get_last(message_history: List[dict]):
     return message_history[-1]["content"]
 
-def label_story(story: str):
-    _ = (kickstart(story))
-    highlight_schema = get_last(_)
-    # TODO: Apply HTML formatting to the labeled story
-    return highlight_schema
+def label_story(story: str, story_title: str):
+    from .models import LabeledStory
+    # Call to the new SGLang function and applying HTML formatting
+    labeled_html_story = kickstart(story, story_title)
+    # Convert the labeled sections to the LabeledStory object
+    labeled_story = LabeledStory.from_html(labeled_html_story)
+    # Apply HTML tags to the labeled story
+    labeled_story.apply_html_tags()
+    return labeled_story.html
