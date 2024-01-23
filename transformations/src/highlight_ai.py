@@ -25,12 +25,11 @@ def get_prompt_part2():
     return user_follow_up_prompt
 
 
+from .sglang_templates import label_story_with_sglang
+
+
 def kickstart(story: str = ""):
-    prompt1 = get_prompt_part1(story)
-    prompt2 = get_prompt_part2()
-    message_list = generate(prompt1)
-    message_list = generate(prompt2, message_history=message_list)
-    return message_list
+    return label_story_with_sglang(story)
 
 
 def generate(prompt: str, max_tokens: int = 500, message_history: List[dict] = []):
@@ -75,7 +74,9 @@ def get_last(message_history: List[dict]):
 
 
 def label_story(story: str):
-    _ = kickstart(story)
-    highlight_schema = get_last(_)
+    message_list = kickstart(story)
+    # Ensure the message list contains the correct prompt elements
+    # Put additional logic here if necessary to check and append to message_list
+    highlight_schema = message_list  # This assignment assumes message_list is now in the correct format
     # TODO: Apply HTML formatting to the labeled story
     return highlight_schema
