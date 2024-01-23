@@ -12,13 +12,15 @@ def index(request):
     
 
 from transformations.src.highlight_ai import label_story
+from transformations.dat.models import StoryHighlights
 
 def highlight(request):
     if request.htmx and request.method == 'POST':
         text_to_highlight = request.POST.get('text_field_name')
         highlighted_story = label_story(text_to_highlight)
-        # TODO: Apply HTML formatting to the highlighted story
-        return HttpResponse(highlighted_story, content_type='text/html')
+        story_highlights = StoryHighlights.process_story_highlights(highlighted_story, text_to_highlight)
+        formatted_story = story_highlights.apply_html_highlights_to_story()
+        return HttpResponse(formatted_story, content_type='text/html')
             
 
 def edit_1(request):
