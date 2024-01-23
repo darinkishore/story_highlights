@@ -141,7 +141,27 @@ def generate_labeled_text(story_labels):
 #     use the story with the most labels for each category as the example
 #     return the example story in the format below:
 
+from transformations.dat.label_statistics import get_label_statistics
+
 def generate_follow_up_prompt(example, example_labels):
+    label_stats = get_label_statistics()
+    # Iterate over the categories to find the example stories
+    example_stories = {}
+    for category in ['Characters', 'Plot Elements', 'Descriptions']:
+        most_labels = 0
+        example_story = None
+        for label, stats in label_stats.items():
+            if stats['count'] > most_labels and any(label in cat for cat in category):
+                most_labels = stats['count']
+                example_story = stats['example_story']
+        if example_story:
+            example_stories[category] = example_story
+
+    # Update the prompting logic to include the examples
+    example_text = ''
+    for category, story in example_stories.items():
+        example_text += f"#### Example Story for {category}\n\n{story}\n\n"
+
     prompt = "Thank you for the planning phase! Now, please proceed to label each line as identified, ensuring thoroughness and precision. Don't blindly highlight everything!\n\n"
     prompt += 'Please use the format `**Label**: "Specific excerpt"`.\n\n'
     prompt += "For example:\n\n```"
