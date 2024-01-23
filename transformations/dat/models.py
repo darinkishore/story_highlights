@@ -57,7 +57,7 @@ class StoryHighlights(BaseModel):
             html_tag = f'<span style="color:{color};">{highlight.excerpt}</span>'
             keyword_processor.add_keyword(highlight.excerpt, html_tag)
 
-        html_story = keyword_processor.replace_keywords(self.story.story)
+        html_story = keyword_processor.replace_keywords(self.html_story)
 
         return html_story
 
