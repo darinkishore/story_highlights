@@ -17,7 +17,7 @@ class Story(BaseModel):
     @model_validator(mode="before")
     def gen_title(cls, data):
         # look for the very first line break in the story, return the text before it, and modify the original story to remove the title
-        if data.get("title") is not None and data("title").strip() != "Test Story":
+        if data.get("title") is not None and data["title"].strip() != "Test Story":
             return data
         else:
             data["story"] = data["story"].strip()
