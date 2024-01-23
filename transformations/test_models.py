@@ -37,3 +37,8 @@ def test_apply_html_tags(story_text, markdown_text):
     for label in labeled_story.highlights:
         color = get_color_mapping(label.label)  # Use the function to get the color
         assert f'<span style="color:{color};">{label.excerpt}</span>' in html_story
+    # Check that the html_story contains all original content with correct html tags
+    assert html_story.count('<span style=') == len(labeled_story.highlights)
+    original_story_words = story_text.split()
+    html_story_words = re.sub(r'<[^>]+>', '', html_story).split()
+    assert original_story_words == html_story_words
