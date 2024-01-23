@@ -1,11 +1,9 @@
-from transformations.dat.prompt_templates import (
-    characters,
-    plot_elements,
-    descriptions,
+from transformations.dat.prompts.prompt_templates import (
     generate_labeled_text,
 )
 from transformations.dat.reference_stories.reference import reference_stories
 from transformations.dat.models import Story, StoryHighlights
+
 
 class BestExamplePicker:
     def __init__(self, category):
