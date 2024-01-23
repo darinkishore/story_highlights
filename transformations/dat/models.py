@@ -25,6 +25,12 @@ class StoryHighlights(BaseModel):
     highlights: List[Highlight]
     html_story: str = None
 
+    def to_markdown(self) -> str:
+        markdown_text = f'### {self.story.title}\n\n{self.story.story}\n\n#### Labeled Sections:\n\n'
+        for label in self.labels:
+            markdown_text += str(label) + '\n'
+        return markdown_text
+
     @classmethod
     def process_story_highlights(
         cls,
