@@ -1,6 +1,6 @@
 import rapidfuzz
 
-# TODO: question: how handle bold?
+
 
 color_mappings = {
     "Main Male Character": "#1155cc",
