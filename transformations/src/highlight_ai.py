@@ -5,7 +5,7 @@ import openai
 from typing import List
 import os
 from dotenv import load_dotenv
-from ..dat.prompt_templates import (
+from transformations.dat.prompts.prompt_templates import (
     system_prompt,
     generate_user_prompt,
     user_follow_up_prompt,
