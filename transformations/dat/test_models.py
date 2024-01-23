@@ -6,7 +6,9 @@ from transformations.dat.colors import get_color_mapping  # Import the function
 
 @pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
 def test_story_model_instantiation(story_text, raw_highlights):
-    story = Story(title="Test Story", story=story_text)
+    first_line = story_text.split('\n', 1)[0]
+    story = Story(story=story_text)
+    assert story.title == first_line
     assert story.title == "Test Story"
     assert story.story == story_text
 
