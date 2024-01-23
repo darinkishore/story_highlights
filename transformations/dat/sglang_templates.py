@@ -33,8 +33,8 @@ def label_story_with_sglang(s, story_text):
     story_highlights = StoryHighlights.process_story_highlights(labeled_story, story_text)
     html_formatted_story = story_highlights.apply_html_highlights_to_story()
 
-    # Include the specific output format
-    s += "Please use the format `**Label**: \"Specific excerpt\"`.\n\n"
+    # Emphasize the importance of accuracy and specify the labeling format
+    s += "It is crucial that the labels are accurate as they will be used for creating TikTok videos through exact text matching. Please use the format `**Label**: \"Specific excerpt\"`.\n\n"
 
     return html_formatted_story
 
