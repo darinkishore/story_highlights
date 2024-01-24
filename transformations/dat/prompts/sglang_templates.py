@@ -1,4 +1,4 @@
-import sglang as sgl
+from sglang import function, system, user, assistant, gen, set_default_backend, OpenAI
 from typing import List
 from transformations.dat.models import Highlight, StoryHighlights
 from transformations.dat.reference_stories.reference import stories
@@ -8,9 +8,9 @@ from .prompt_templates import (
 from .prompt_elements import characters, plot_elements, descriptions, system_prompt
 
 
-@sgl.function
+@function
 def label_story_with_sglang(s, story_text):
-    s += sgl.system(system_prompt)  # Include the system prompt
+    s += system(system_prompt)  # Include the system prompt
 
     # Define the categories and their corresponding label dictionaries
     categories = [
