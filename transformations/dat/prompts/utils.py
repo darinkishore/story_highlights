@@ -6,7 +6,6 @@ from transformations.dat.prompts.prompt_templates import (
 from transformations.dat.reference_stories.reference import reference_stories
 from transformations.dat.models import StoryHighlights
 from prompt_templates import categories
-import rich
 
 
 """
@@ -91,16 +90,16 @@ class BestExamplePicker:
 
 
 # debug prints
-def print_story_details(category, story, story_label_counts, best_story):
-    print("\n----------------")
-    print(f"Category: {category}")
-    print(f"Story: {story[:20]}")
-    print(f"Label counts: {story_label_counts[story]}")
-    print(f"Best Story for this category: {best_story}")
-    print("----------------\n")
-
-
-for category in categories.keys():
-    best_example_picker = BestExamplePicker(categories[category])
-    story_label_counts = best_example_picker.get_markdown_example()
-    rich.print(best_example_picker.markdown_example)
+# def print_story_details(category, story, story_label_counts, best_story):
+#     print("\n----------------")
+#     print(f"Category: {category}")
+#     print(f"Story: {story[:20]}")
+#     print(f"Label counts: {story_label_counts[story]}")
+#     print(f"Best Story for this category: {best_story}")
+#     print("----------------\n")
+#
+#
+# for category in categories.keys():
+#     best_example_picker = BestExamplePicker(categories[category])
+#     story_label_counts = best_example_picker.get_markdown_example()
+#     rich.print(best_example_picker.markdown_example)
