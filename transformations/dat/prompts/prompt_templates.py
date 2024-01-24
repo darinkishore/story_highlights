@@ -83,11 +83,10 @@ def generate_label_section(title, labels_dict):
 def generate_user_prompt(story):
     prompt = "Hi! Please help me label my story using the following system:\n\n"
     prompt += "### Labeling Rules for Reddit Stories\n\n"
-    prompt += generate_label_section("Characters", characters)
-    prompt += generate_label_section("Plot Elements", plot_elements)
-    prompt += generate_label_section("Descriptions", descriptions)
-    prompt += f"\nPlease plan the labels for the following story:\n\n### Reddit Story\n```\n{story}\n```\n\n"
-    prompt += "Initially, let's focus on planning the labels. The execution will be in the next message."
+    for category_name, labels_dict in categories.items():
+        prompt += generate_label_section(category_name, labels_dict)
+    prompt += f"\nPlease plan the labels for each category in the following story:\n\n### Reddit Story\n```\n{story}\n```\n\n"
+    prompt += "The execution will be in the next message. Thank you for your contribution!"
     return prompt
 
 
