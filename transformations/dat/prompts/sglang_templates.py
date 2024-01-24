@@ -36,10 +36,8 @@ def label_story_with_sglang(s, story_text):
     s += sgl.gen("labeled_story", max_tokens=1024)
 
     labeled_story = s["labeled_story"]
-    story_highlights = StoryHighlights.process_story_highlights(
-        labeled_story, story_text
-    )
-    html_formatted_story = story_highlights.apply_html_highlights_to_story()
+    story_highlights = StoryHighlights.add_highlights(labeled_story, story_text)
+    html_formatted_story = story_highlights.apply_html_highlights()
 
     # Include the specific output format
     s += 'Please use the format `**Label**: "Specific excerpt"`.\n\n'
@@ -52,7 +50,7 @@ def find_best_example(category_labels: dict) -> (str, List[Highlight]):
     best_highlights = []
     max_label_count = 0
     for story_data in stories:
-        story_highlights = StoryHighlights.process_story_highlights(
+        story_highlights = StoryHighlights.add_highlights(
             story_data["highlights"], story_data["story"], story_data["title"]
         )
         label_count = sum(
@@ -73,7 +71,7 @@ def find_best_example(category_labels: dict) -> (str, List[Highlight]):
 
 # def render_highlights_to_html(story: str, highlights: List[Highlight]) -> str:
 #     story_highlights = StoryHighlights(story=Story(title=story_title, story=story), highlights=highlights)
-#     return story_highlights.apply_html_highlights_to_story()
+#     return story_highlights.apply_html_highlights()
 
 # with ThreadPoolExecutor() as executor:
 #     plans = list(executor.map(generate_plan, ["Characters", "Plot Elements", "Descriptions"], [characters, plot_elements, descriptions]))

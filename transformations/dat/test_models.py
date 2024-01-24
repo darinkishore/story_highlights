@@ -32,12 +32,14 @@ def test_story_is_not_empty(story_text, raw_highlights):
 def test_total_story_length_is_same(story_text, raw_highlights):
     story = Story(story=story_text)
     abs_diff = 4
-    assert abs(
-        len(story_text.strip())
-        - (len(story.title.strip()) + 
-           len(story.story.strip()))
-    ) <= abs_diff
-    
+    assert (
+        abs(
+            len(story_text.strip())
+            - (len(story.title.strip()) + len(story.story.strip()))
+        )
+        <= abs_diff
+    )
+
 
 @pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
 def test_label_model_instantiation(story_text, raw_highlights):
@@ -53,10 +55,9 @@ def test_label_model_instantiation(story_text, raw_highlights):
 def test_num_labels_accurate(story_text, raw_highlights):
     # makes sure no labels are missed
     num_highlights = len(re.findall(r"^- ", raw_highlights, re.MULTILINE))
-    story_highlights = StoryHighlights.process_story_highlights(
-        raw_highlights, story_text
-    )
-    assert len(story_highlights.highlights) == num_highlights
+    nice = StoryHighlights(story=story_text)
+    nice.add_highlights(raw_highlights)
+    assert len(nice.highlights) == num_highlights
 
 
 @pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
@@ -72,7 +73,7 @@ def test_highlight_model_instantiation(story_text, raw_highlights):
 
 @pytest.mark.parametrize("story_text, markdown_text", reference_stories)
 def process_story_highlights_test(story_text, raw_highlights):
-    labeled_story = StoryHighlights.process_story_highlights(raw_highlights, story_text)
+    labeled_story = StoryHighlights.add_highlights(raw_highlights, story_text)
     assert labeled_story.story.story == story_text
     assert len(labeled_story.highlights) == len(
         list(re.finditer(r'- \*\*(.*?)\*\*: "(.*?)"(?=\s|$)', raw_highlights))
@@ -81,8 +82,10 @@ def process_story_highlights_test(story_text, raw_highlights):
 
 @pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
 def test_apply_html_tags(story_text, raw_highlights):
-    labeled_story = StoryHighlights.process_story_highlights(raw_highlights, story_text)
-    html_story = labeled_story.apply_html_highlights_to_story()
-    for label in labeled_story.highlights:
+    nice = StoryHighlights(story=story_text)
+    nice.add_highlights(raw_highlights)
+    nice.apply_html_highlights()
+
+    for label in nice.highlights:
         color = get_color_mapping(label.label)  # Use the function to get the color
-        assert f'<span style="color:{color};">{label.excerpt}</span>' in html_story
+        assert f'<span style="color:{color};">{label.excerpt}</span>' in nice.html_story
