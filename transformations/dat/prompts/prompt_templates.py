@@ -83,9 +83,16 @@ def generate_label_section(title, labels_dict):
 def generate_user_prompt(story):
     prompt = "Hi! Please help me label my story using the following system:\n\n"
     prompt += "### Labeling Rules for Reddit Stories\n\n"
-    prompt += generate_label_section("Characters", characters)
-    prompt += generate_label_section("Plot Elements", plot_elements)
-    prompt += generate_label_section("Descriptions", descriptions)
+    from transformations.dat.prompts.example_gen import BestExamplePicker
+    from transformations.dat.models import StoryHighlights
+
+    for title, labels_dict in categories.items():
+        prompt += generate_label_section(title, labels_dict)
+        best_example_picker = BestExamplePicker(labels_dict)
+        story_model_example = best_example_picker.get_story_model_example()
+        if story_model_example:
+            formatted_example = StoryHighlights(story_model_example).to_markdown()
+            prompt += formatted_example
     prompt += f"\nPlease plan the labels for the following story:\n\n### Reddit Story\n```\n{story}\n```\n\n"
     prompt += "Initially, let's focus on planning the labels. The execution will be in the next message."
     return prompt
