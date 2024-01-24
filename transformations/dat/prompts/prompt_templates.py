@@ -141,7 +141,16 @@ def generate_follow_up_prompt(example, example_labels):
     prompt += "For example:\n\n```"
     prompt += f"\n### Reddit Story\n```\n{example}\n```\n\n"
     prompt += "\n#### Labeled Sample Text:\n\n"
-    prompt += generate_labeled_text(story_labels)
+    from transformations.dat.prompts.example_gen import BestExamplePicker
+
+    # Remove the hardcoded story_labels and dynamically get markdown examples for each category
+    for category, labels_dict in categories.items():
+        best_example_picker = BestExamplePicker(labels_dict)
+        markdown_example = best_example_picker.get_markdown_example()
+        if markdown_example:
+            prompt += markdown_example
+        else:
+            prompt += f'No markdown example found for {category}'
     prompt += "```\n\n"
     prompt += "\n An accurate and engaging labeling is crucial, as your output will be extracted via exact text matching and put into a TikTok video. Consider every line and maintain the formatting consistently. Thank you."
     return prompt
