@@ -52,23 +52,7 @@ plot_elements = {
     "unfavorably or anticipated with dread.",
 }
 
-# Descriptions dictionary
-descriptions = {
-    "Positive Description": "Label adjectives and adverbs that are in a positive context, or describe something "
-    "positive/happy in general.",
-    "Negative Description": "Label creepy/negative/bad adjectives, adverbs, and verbs.",
-    "Nature Description": "Label all nature-related descriptions. This includes plants, animals, natural phenomena, "
-    "forests, ecosystems, and the like.",
-    "Money and Wealth": "Label references to money, wealth, luxury, opulence. This includes expensive things, places, "
-    "services, scenarios. Any specific dollar amount should also be labeled.",
-    "Water-Related Description": "Label all water body-related descriptions.",
-}
-
-categories = {
-    "Characters": characters,
-    "Plot Elements": plot_elements,
-    "Descriptions": descriptions,
-}
+from transformations.dat.prompts.example_gen import BestExamplePicker
 
 #  PROMPT PART 1: RULES AND PLANNING
 
@@ -127,13 +111,18 @@ def generate_labeled_text(story_labels):
 #     return the example story in the format below:
 
 
-def generate_follow_up_prompt(example, example_labels):
+def generate_follow_up_prompt():
     prompt = "Thank you for the planning phase! Now, please proceed to label each line as identified, ensuring thoroughness and precision. Don't blindly highlight everything!\n\n"
     prompt += 'Please use the format `**Label**: "Specific excerpt"`.\n\n'
-    prompt += "For example:\n\n```"
-    prompt += f"\n### Reddit Story\n```\n{example}\n```\n\n"
-    prompt += "\n#### Labeled Sample Text:\n\n"
-    prompt += generate_labeled_text(story_labels)
-    prompt += "```\n\n"
-    prompt += "\n An accurate and engaging labeling is crucial, as your output will be extracted via exact text matching and put into a TikTok video. Consider every line and maintain the formatting consistently. Thank you."
+    prompt += "For example:\n\n"
+    for category_name, labels_dict in categories.items():
+        best_example_picker = BestExamplePicker(labels_dict)
+        markdown_example = best_example_picker.get_markdown_example()
+        if markdown_example:
+            prompt += f"#### {category_name} Example\n"
+            prompt += markdown_example + "\n\n"
+        else:
+            prompt += f"#### {category_name} Example\n"
+            prompt += "No example found.\n\n"
+    prompt += "An accurate and engaging labeling is crucial, as your output will be extracted via exact text matching and put into a TikTok video. Consider every line and maintain the formatting consistently. Thank you."
     return prompt
