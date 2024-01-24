@@ -43,7 +43,7 @@ class BestExamplePicker:
     """
     def __init__(self, category):
         self.category = category
-        if any(key.lower() for key in self.category.keys() if 'male' in key or 'female' in key):
+        if 'Male Character 1' in self.category or 'Female Character 1' in self.category:
             self.category.update(generate_character_labels())
         self.stories = [StoryHighlights(story=story[0]) for story in reference_stories]
         for i, story in enumerate(self.stories):
@@ -76,20 +76,21 @@ class BestExamplePicker:
 
     def get_markdown_example(self):
         best_story_title = self.get_best_story_for_category()
-        for story in self.stories:
-            if story.story.title == best_story_title:
-                # Filter labels by category
-                filtered_highlights = [
-                    highlight
-                    for highlight in story.highlights
-                    if highlight.label in self.category
-                ]
-                # Make a new story highlights object
-                new_story = StoryHighlights(
-                    story=story.story, highlights=filtered_highlights
-                )
-                return str(new_story)
-        return None
+        if best_story_title:
+            for story in self.stories:
+                if story.story.title == best_story_title:
+                    # Filter labels by category
+                    filtered_highlights = [
+                        highlight
+                        for highlight in story.highlights
+                        if highlight.label in self.category
+                    ]
+                    # Make a new story highlights object
+                    new_story = StoryHighlights(
+                        story=story.story, highlights=filtered_highlights
+                    )
+                    return str(new_story)
+        return 'No example available for this category.'
     
     def get_story_model_example(self):
         best_story_title = self.get_best_story_for_category()
