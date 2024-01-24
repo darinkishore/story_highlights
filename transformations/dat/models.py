@@ -1,13 +1,10 @@
-from typing import List, Any
+from typing import List, Any, Optional, Union
 import rapidfuzz
-from pydantic import BaseModel, validator, model_validator
+from pydantic import BaseModel, field_validator, model_validator
 import re
 from flashtext import KeywordProcessor
 
 from transformations.dat.colors import color_set, get_color_mapping
-
-
-# Define the Pydantic models
 
 
 class Story(BaseModel):
@@ -16,7 +13,6 @@ class Story(BaseModel):
 
     @model_validator(mode="before")
     def gen_title(cls, data):
-        # look for the very first line break in the story, return the text before it, and modify the original story to remove the title
         if data.get("title") is not None and data["title"].strip() != "Test Story":
             return data
         else:
@@ -37,9 +33,17 @@ class Highlight(BaseModel):
 
 
 class StoryHighlights(BaseModel):
-    story: Story
-    highlights: List[Highlight]
+    story: Union[Story, str] = None
+    highlights: Optional[List[Highlight]] = []
     html_story: str = None
+
+    @model_validator(mode="before")
+    def process_story(cls, data):
+        if isinstance(data["story"], Story):
+            return data
+        else:
+            data["story"] = Story(story=data["story"])
+            return data
 
     def to_markdown(self) -> str:
         markdown_text = f"### {self.story.title}\n\n{self.story.story}\n\n#### Labeled Sections:\n\n"
@@ -47,24 +51,14 @@ class StoryHighlights(BaseModel):
             markdown_text += str(label) + "\n"
         return markdown_text
 
-    @classmethod
-    def process_story_highlights(
-        cls,
-        raw_highlight_response: str,
-        story_text: str,
-        story_title: str = "Story Title",
-    ):
-        # Update the regex pattern to handle nested quotations
+    def add_highlights(self, raw_highlight_response: str):
         label_pattern = re.compile(r'- \*\*(.*?)\*\*: "(.*?)"(?=\s|$)')
-        highlights_list = []
 
         for match in label_pattern.finditer(raw_highlight_response):
             label, excerpt = match.groups()
             try:
-                # This will raise a KeyError if the label doesn't exist in the color mappings
                 get_color_mapping(label)
             except KeyError:
-                # If the label doesn't exist, find the closest match and replace the label with that
                 closest_match = rapidfuzz.process.extractOne(
                     label,
                     color_set,
@@ -74,12 +68,9 @@ class StoryHighlights(BaseModel):
                 if closest_match is not None:
                     label = closest_match[0]
 
-            highlights_list.append(Highlight(label=label, excerpt=excerpt))
+            self.highlights.append(Highlight(label=label, excerpt=excerpt))
 
-        story = Story(title=story_title, story=story_text)
-        return cls(story=story, highlights=highlights_list)
-
-    def apply_html_highlights_to_story(self):
+    def apply_html_highlights(self):
         from transformations.dat.colors import get_color_mapping
 
         keyword_processor = KeywordProcessor()
@@ -93,12 +84,18 @@ class StoryHighlights(BaseModel):
             html_tag = f'<span style="color:{color};">{highlight.excerpt}</span>'
             keyword_processor.add_keyword(highlight.excerpt, html_tag)
 
-        html_story = keyword_processor.replace_keywords(self.story.story)
+        html_story = keyword_processor.replace_keywords(
+            self.story.title + "\n" + self.story.story
+        )
 
-        return html_story
+        self.html_story = html_story
 
-    def __str__(self):
-        labeled_text = "\n".join(str(highlight.label) for highlight in self.highlights)
+    def __repr__(self):
+        labeled_text = (
+            "\n".join(str(highlight.label) for highlight in self.highlights)
+            if self.highlights
+            else "No highlights"
+        )
 
         return f"""### Reddit Story\n
         {self.story.title}\n
@@ -106,3 +103,10 @@ class StoryHighlights(BaseModel):
         #### Labeled Text:\n\n
         {labeled_text}
         """
+
+    def __str__(self):
+        # get useful stats
+        num_highlights = len(self.highlights)
+        num_words = len(self.story.story.split())
+        num_chars = len(self.story.story)
+        return f"<StoryHighlights story={self.story.title} num_highlights={num_highlights} num_words={num_words} num_chars={num_chars}>"
