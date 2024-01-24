@@ -3,6 +3,7 @@ from transformations.dat.prompts.prompt_elements import (
     plot_elements,
     descriptions,
 )
+from transformations.dat.prompts.example_gen import BestExamplePicker
 
 categories = {
     "Characters": characters,
@@ -41,6 +42,12 @@ def generate_labeled_text(story_labels):
 
 
 def generate_follow_up_prompt(example, example_labels):
+    labeled_text = "#### Labeled Sample Text:\n\n" 
+    for category_name, labels_dict in categories.items():
+        best_example_picker = BestExamplePicker(labels_dict)
+        markdown_example = best_example_picker.get_markdown_example()
+        if markdown_example:
+            labeled_text += markdown_example + "\n\n"
     prompt = "Thank you for the planning phase! Now, please proceed to label each line as identified, ensuring thoroughness and precision. Don't blindly highlight everything!\n\n"
     prompt += 'Please use the format `**Label**: "Specific excerpt"`.\n\n'
     prompt += "For example:\n\n```"
