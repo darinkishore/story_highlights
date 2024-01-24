@@ -1,9 +1,10 @@
 from http.client import HTTPException
 
-from openai import OpenAI
+from openai import AsyncOpenAI
 import openai
 from typing import List
 import os
+import asyncio
 from dotenv import load_dotenv
 from transformations.dat.prompts.prompt_templates import (
     system_prompt,
@@ -25,24 +26,25 @@ def get_prompt_part2():
     return user_follow_up_prompt
 
 
-def kickstart(story: str = ""):
-    prompt1 = get_prompt_part1(story)
-    prompt2 = get_prompt_part2()
-    message_list = generate(prompt1)
-    message_list = generate(prompt2, message_history=message_list)
-    return message_list
+async def kickstart(story: str = ""):
+    prompts = [get_prompt_part1(story), get_prompt_part2()]
+    message_lists = await asyncio.gather(*(generate(prompt) for prompt in prompts))
+    return [item for sublist in message_lists for item in sublist]
 
 
-def generate(prompt: str, max_tokens: int = 500, message_history: List[dict] = []):
+async def generate(prompt: str, max_tokens: int = 500, message_history: List[dict] = []):
     try:
-        client = OpenAI()
+        client = AsyncOpenAI()
         if message_history:
             message_history.append({"role": "user", "content": prompt})
-            response = client.chat.completions.create(
-                model="gpt-4-1106-preview",
-                messages=message_history,
-                temperature=0.0,
-            )
+            try:
+                response = await client.chat.completions.create(
+                    model="gpt-4-1106-preview",
+                    messages=message_history,
+                    temperature=0.0,
+                )
+            except openai.error.OpenAIError as e:
+                raise HTTPException(status_code=500, detail=f"OpenAI API error: {str(e)}")
             return message_history + [
                 {
                     "role": "assistant",
@@ -54,7 +56,7 @@ def generate(prompt: str, max_tokens: int = 500, message_history: List[dict] = [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt},
             ]
-            response = client.chat.completions.create(
+            response = await client.chat.completions.create(
                 model="gpt-4-1106-preview",
                 messages=messages,
                 temperature=0.0,
@@ -75,7 +77,8 @@ def get_last(message_history: List[dict]):
 
 
 def label_story(story: str):
-    _ = kickstart(story)
+    _ = asyncio.run(kickstart(story))
     highlight_schema = get_last(_)
-    # TODO: Apply HTML formatting to the labeled story
-    return highlight_schema
+    # Applying HTML formatting to the labeled story
+    highlighted_html = f"<div class='story'>{''.join(['<strong>' + part.split(':')[0] + '</strong>' + part.split(':')[1] for part in highlight_schema.split('**Label**:') if part.strip() != ''])}</div>"
+    return highlighted_html
