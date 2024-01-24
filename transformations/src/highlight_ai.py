@@ -8,8 +8,10 @@ from dotenv import load_dotenv
 from transformations.dat.prompts.prompt_templates import (
     system_prompt,
     generate_user_prompt,
-    user_follow_up_prompt,
+    user_follow_up_prompt
 )
+
+from transformations.dat.models import StoryHighlights
 
 
 load_dotenv()
@@ -77,5 +79,7 @@ def get_last(message_history: List[dict]):
 async def label_story(story: str):
     _ = await kickstart(story)
     highlight_schema = get_last(_)
-    # TODO: Apply HTML formatting to the labeled story
-    return highlight_schema
+    story_highlights = StoryHighlights(highlights=[])
+    story_highlights.add_highlights(highlight_schema)
+    story_highlights.apply_html_highlights()
+    return story_highlights.html_story
