@@ -6,11 +6,12 @@ from typing import List
 import os
 from dotenv import load_dotenv
 from transformations.dat.prompts.prompt_templates import (
-    system_prompt,
     generate_user_prompt,
+)
+from transformations.dat.prompts.prompt_elements import (
+    system_prompt,
     user_follow_up_prompt,
 )
-
 
 load_dotenv()
 
