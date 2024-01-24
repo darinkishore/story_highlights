@@ -25,11 +25,11 @@ def get_prompt_part2():
     return user_follow_up_prompt
 
 
-def kickstart(story: str = ""):
+async def kickstart(story: str = ""):
     prompt1 = get_prompt_part1(story)
     prompt2 = get_prompt_part2()
-    message_list = generate(prompt1)
-    message_list = generate(prompt2, message_history=message_list)
+    message_list = await generate(prompt1)
+    message_list = await generate(prompt2, message_history=message_list)
     return message_list
 
 
@@ -74,8 +74,8 @@ def get_last(message_history: List[dict]):
     return message_history[-1]["content"]
 
 
-def label_story(story: str):
-    _ = kickstart(story)
+async def label_story(story: str):
+    _ = await kickstart(story)
     highlight_schema = get_last(_)
     # TODO: Apply HTML formatting to the labeled story
     return highlight_schema
