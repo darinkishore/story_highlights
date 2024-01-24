@@ -1,3 +1,5 @@
+from transformations.dat.prompts.prompt_templates import story_labels
+from transformations.dat.prompts.example_gen import BestExamplePicker
 from transformations.dat.prompts.prompt_elements import (
     characters,
     plot_elements,
@@ -23,10 +25,18 @@ def generate_label_section(title, labels_dict):
 def generate_user_prompt(story):
     prompt = "Hi! The following is a series of labels :\n\n"
     prompt += "### Labeling Rules for Reddit Stories\n\n"
-    prompt += generate_label_section("Characters", characters)
-    prompt += generate_label_section("Plot Elements", plot_elements)
-    prompt += generate_label_section("Descriptions", descriptions)
-    prompt += f"\nPlease plan the labels for the following story:\n\n### Reddit Story\n```\n{story}\n```\n\n"
+    category_prompts = {}
+    for category_name, category_labels in categories.items():
+        category_prompt = f"### {category_name} Labels\n"
+        category_prompt += generate_label_section(category_name, category_labels)
+        best_example_picker = BestExamplePicker(category_labels)
+        markdown_example = best_example_picker.get_markdown_example()
+        category_prompt += f"\n{markdown_example}" if markdown_example else "No example available for this category.\n"
+        category_prompts[category_name] = category_prompt
+
+    for category_name, category_prompt in category_prompts.items():
+        prompt += f"\n\n---\n\n{category_prompt}"
+    prompt += f"\nPlease plan the labels for the categories above using the formatted examples as a guide."
     prompt += "Initially, let's focus on planning the labels. The execution will be in the next message."
     return prompt
 
