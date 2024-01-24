@@ -1,3 +1,4 @@
+from transformations.dat.prompts.example_gen import BestExamplePicker
 from transformations.dat.prompts.prompt_elements import (
     characters,
     plot_elements,
@@ -21,7 +22,7 @@ def generate_label_section(title, labels_dict):
 
 
 def generate_user_prompt(story):
-    prompt = "Hi! The following is a series of labels :\n\n"
+    prompt = "Please plan out how these labeling rules could apply to the reddit story below. Your plan should comprise of 1-3 bullet points per example.\n\n"
     prompt += "### Labeling Rules for Reddit Stories\n\n"
     prompt += generate_label_section("Characters", characters)
     prompt += generate_label_section("Plot Elements", plot_elements)
@@ -39,6 +40,18 @@ def generate_labeled_text(story_labels):
     for excerpt, label in story_labels:
         labeled_text += f'- **{label}**: "{excerpt}"\n'
     return labeled_text
+
+
+def get_best_example_for_category(category):
+    best_example_picker = BestExamplePicker(categories[category])
+    markdown_example = best_example_picker.get_markdown_example()
+    return markdown_example
+
+def generate_examples_for_all_categories():
+    examples = {}
+    for category in categories.keys():
+        examples[category] = get_best_example_for_category(category)
+    return examples
 
 
 def generate_follow_up_prompt(example, example_labels):
