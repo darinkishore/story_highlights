@@ -11,3 +11,4 @@ pytest-django
 rapidfuzz
 sglang[openai]
 bs4
+pytest-asyncio
