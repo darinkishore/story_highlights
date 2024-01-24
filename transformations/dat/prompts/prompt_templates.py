@@ -69,6 +69,12 @@ descriptions = {
     "Water-Related Description": "Label all water body-related descriptions.",
 }
 
+categories = {
+    "Characters": characters,
+    "Plot Elements": plot_elements,
+    "Descriptions": descriptions,
+}
+
 #  PROMPT PART 1: RULES AND PLANNING
 
 
