@@ -18,9 +18,9 @@ def test_merged_best_examples():
     category_examples = []
     for category in categories:
         best_example_picker = BestExamplePicker(categories[category])
-        filtered_story = best_example_picker.get_story_model_example()
-        if filtered_story:
-            category_examples.append(filtered_story)
+        markdown_example = best_example_picker.get_markdown_example()
+        if markdown_example:
+            category_examples.append(markdown_example)
 
     combined_highlights = []
     for example in category_examples:
@@ -34,12 +34,9 @@ def test_merged_best_examples():
         not possible_missing_list
     ), f"Highlights not found in combined highlights: {possible_missing_list}"
 
-    gold_std.apply_html_highlights()
-    merged_example = StoryHighlights(
-        story=gold_std.story, highlights=combined_highlights
-    )
-    merged_example.apply_html_highlights()
+    merged_markdown = '\n\n'.join(category_examples)   # Combine all category markdown examples
 
-    soup1 = BeautifulSoup(gold_std.html_story, "html.parser")
-    soup2 = BeautifulSoup(merged_example.html_story, "html.parser")
-    assert str(soup1) == str(soup2), "HTML does not match"
+    # Convert gold standard highlights to markdown for comparison
+    gold_std_markdown = '\n'.join([str(highlight) for highlight in gold_std.highlights])
+    # Validating that the merged markdown is equal to the gold standard
+    assert merged_markdown == gold_std_markdown, "Markdown does not match"
