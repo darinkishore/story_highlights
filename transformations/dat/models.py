@@ -90,21 +90,16 @@ class StoryHighlights(BaseModel):
 
         self.html_story = html_story
 
-    def __repr__(self):
+    def __str__(self):
         labeled_text = (
-            "\n".join(str(highlight.label) for highlight in self.highlights)
+            "\n".join(str(highlight) for highlight in self.highlights)
             if self.highlights
             else "No highlights"
         )
 
-        return f"""### Reddit Story\n
-        {self.story.title}\n
-        {self.story.story}\n\n
-        #### Labeled Text:\n\n
-        {labeled_text}
-        """
+        return f"### Reddit Story\n\n{self.story.title}\n{self.story.story}\n\n#### Labeled Text: \n\n{labeled_text}"
 
-    def __str__(self):
+    def __repr__(self):
         # get useful stats
         num_highlights = len(self.highlights)
         num_words = len(self.story.story.split())

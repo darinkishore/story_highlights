@@ -26,12 +26,9 @@ Your detailed and accurate labeling is crucial, as it will be extracted via a sc
 # Characters dictionary
 characters = {
     "Main Male Character": "Label name/pronouns/dialogue.",
-    "Male Character 1|2|3|n": "For each male side character, label their individual name/pronouns/dialogue as Male "
-    "Character n. (where n is a consistently assigned number for their character in order of appearance)",
+    "Male Character 1|2|3|n": "For each male side character, label their individual name/pronouns/dialogue as Male Character n. (where n is a consistently assigned number for their character in order of appearance)",
     "Main Female Character": "Label name, pronouns, and dialogue.",
-    "Female Character 1|2|3|n": "For each female side character, label their individual name/pronouns/dialogue as "
-    "`Female Character n`. (where n is a consistently assigned number for their character "
-    "in order of appearance)",
+    "Female Character 1|2|3|n": "For each female side character, label their individual name/pronouns/dialogue as `Female Character n`. (where n is a consistently assigned number for their character in order of appearance)",
     "Antagonist/Villain": "Only during and after a character's reveal as the antagonist/villain, label their name, "
     "pronouns, and dialogue as 'Antagonist/Villain'.",
     "Unknown Role": "Label name and dialogue, if we don't know the role of the character yet. Generally, this person "
@@ -40,22 +37,20 @@ characters = {
 }
 
 # Plot Elements dictionary
-plot_elements = (
-    {
-        "Danger or Violence": "Label acts of violence, violent verbs/adjectives, any words that indicate or "
-        "contribute to a feel of physical/emotional danger",
-        "Important Information": "Label names of significant places, events, entities.",
-        "Climax or Resolution": "Label the specific, flashy/pivotal/important story moments that are crucial elements "
-        "in the climax or resolution of the story. Do not label the whole sentence(s), "
-        "but only the most important contributing snippets.",
-        "Positive Time Reference": "Label references to a particular time, event, or memory that are positive and "
-        "favorably looked remembered/anticipated, (eg: anniversaries, birthdays, etc.)",
-        "Neutral Time Reference": "Label references to a particular time, event, or memory that are generally "
-        "neutral. Always label dates, ages, months, and years.",
-        "Negative Time Reference": "Label references to a particular time, event, or memory that are remembered "
-        "unfavorably or anticipated with dread.",
-    },
-)
+plot_elements = {
+    "Danger/Violence": "Label acts of violence, violent verbs/adjectives, any words that indicate or "
+    "contribute to a feel of physical/emotional danger",
+    "Important Information": "Label names of significant places, events, entities.",
+    "Climax or Resolution": "Label the specific, flashy/pivotal/important story moments that are crucial elements "
+    "in the climax or resolution of the story. Do not label the whole sentence(s), "
+    "but only the most important contributing snippets.",
+    "Positive Time Reference": "Label references to a particular time, event, or memory that are positive and "
+    "favorably looked remembered/anticipated, (eg: anniversaries, birthdays, etc.)",
+    "Neutral Time Reference": "Label references to a particular time, event, or memory that are generally "
+    "neutral. Always label dates, ages, months, and years.",
+    "Negative Time Reference": "Label references to a particular time, event, or memory that are remembered "
+    "unfavorably or anticipated with dread.",
+}
 
 # Descriptions dictionary
 descriptions = {
