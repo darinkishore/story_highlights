@@ -3,12 +3,9 @@ from typing import List
 from transformations.dat.models import Highlight, StoryHighlights
 from transformations.dat.reference_stories.reference import stories
 from .prompt_templates import (
-    characters,
-    plot_elements,
-    descriptions,
     generate_label_section,
-    system_prompt,
 )
+from .prompt_elements import characters, plot_elements, descriptions, system_prompt
 
 
 @sgl.function
