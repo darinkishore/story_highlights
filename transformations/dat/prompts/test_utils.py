@@ -1,19 +1,19 @@
-import pytest
-from transformations.dat.prompts.prompt_templates import (
-    characters,
-    plot_elements,
-    descriptions,
-)
-from transformations.dat.prompts.utils import BestExamplePicker
-from transformations.dat.reference_stories.reference import reference_stories
-from transformations.dat.models import Story, StoryHighlights
+# import pytest
+# from transformations.dat.prompts.prompt_templates import (
+#     characters,
+#     plot_elements,
+#     descriptions,
+# )
+# from transformations.dat.prompts.utils import BestExamplePicker
+# from transformations.dat.reference_stories.reference import reference_stories
+# from transformations.dat.models import Story, StoryHighlights
 
 # verify that the best story is being selected for each category
 
 
 # @pytest.fixture
 # def best_examples():
-#     story_models = [StoryHighlights(story=Story(story=story[0]), highlights=story[1]).process_story_highlights() for story in reference_stories]
+#     story_models = [StoryHighlights(story=Story(story=story[0]), highlights=story[1]).add_highlights() for story in reference_stories]
 #     for story in story_models:
 #         # compute the label counts for each story
 #         label_counts = {}
