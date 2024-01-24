@@ -1,11 +1,6 @@
-from pprint import pprint
-
-from transformations.dat.prompts.prompt_templates import (
-    generate_labeled_text,
-)
 from transformations.dat.reference_stories.reference import reference_stories
 from transformations.dat.models import StoryHighlights
-from prompt_templates import categories
+from transformations.dat.prompts.prompt_templates import categories
 
 
 """
@@ -32,6 +27,13 @@ for category in categories.keys():
     
 """
 
+# fucky but useful workaround
+def generate_character_labels(max_characters=10):
+    character_labels = {}
+    for i in range(1, max_characters + 1):
+        character_labels[f"Male Character {i}"] = f"For each male side character, label their individual name/pronouns/dialogue as Male Character {i}. (where {i} is a consistently assigned number for their character in order of appearance)"
+        character_labels[f"Female Character {i}"] = f"For each female side character, label their individual name/pronouns/dialogue as Female Character {i}. (where {i} is a consistently assigned number for their character in order of appearance)"
+    return character_labels
 
 class BestExamplePicker:
     """
@@ -39,9 +41,10 @@ class BestExamplePicker:
     It will go through each story and count the number of highlights that have the category label
     It will then return the story with the most highlights for that category
     """
-
     def __init__(self, category):
         self.category = category
+        if any(key.lower() for key in self.category.keys() if 'male' in key or 'female' in key):
+            self.category.update(generate_character_labels())
         self.stories = [StoryHighlights(story=story[0]) for story in reference_stories]
         for i, story in enumerate(self.stories):
             story.add_highlights(reference_stories[i][1])
@@ -87,6 +90,24 @@ class BestExamplePicker:
                 )
                 return str(new_story)
         return None
+    
+    def get_story_model_example(self):
+        best_story_title = self.get_best_story_for_category()
+        for story in self.stories:
+            if story.story.title == best_story_title:
+                # Filter labels by category
+                filtered_highlights = [
+                    highlight
+                    for highlight in story.highlights
+                    if highlight.label in self.category
+                ]
+                # Make a new story highlights object
+                new_story = StoryHighlights(
+                    story=story.story, highlights=filtered_highlights
+                )
+                return new_story
+        return None
+        
 
 
 # debug prints
