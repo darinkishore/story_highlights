@@ -48,13 +48,13 @@ def generate_labeled_text(story_labels):
     return labeled_text
 
 
-def generate_follow_up_prompt(example, example_labels):
-    prompt = "Thank you for the planning phase! Now, please proceed to label each line as identified, ensuring thoroughness and precision. Don't blindly highlight everything!\n\n"
-    prompt += 'Please use the format `**Label**: "Specific excerpt"`.\n\n'
-    prompt += "For example:\n\n```"
-    prompt += f"\n### Reddit Story\n```\n{example}\n```\n\n"
-    prompt += "\n#### Labeled Sample Text:\n\n"
-    prompt += generate_labeled_text(story_labels)
-    prompt += "```\n\n"
-    prompt += "\n An accurate and engaging labeling is crucial, as your output will be extracted via exact text matching and put into a TikTok video. Consider every line and maintain the formatting consistently. Thank you."
+def generate_follow_up_prompt(story):
+    prompt = "Thank you for the planning phase! Here are some examples to guide you:\n"
+    for category_name, category_labels in categories.items():
+        best_example_picker = BestExamplePicker(category_labels)
+        markdown_example = best_example_picker.get_markdown_example()
+        if markdown_example:
+            prompt += f"### {category_name} Example\n{markdown_example}\n"
+    prompt += "\nNow, please label the story's sections according to the categories and examples provided. Ensure accuracy and attention to detail."
+    prompt += "\n\n### Reddit Story\n```\n{story}\n```\nAn accurate and consistent labeling is crucial for our TikTok video content. Thanks for your contribution!"
     return prompt
