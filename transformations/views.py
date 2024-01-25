@@ -19,15 +19,10 @@ def index(request):
 from transformations.src.highlight_ai import label_story
 
 
-def dummy_html_transform(text: str) -> str:
-    # make it bold
-    return f"<b>{text}</b>"
-
-
-def highlight(request):
+async def highlight(request):
     if request.method == "POST":
         text = request.POST.get("input_text")
-        html = dummy_html_transform(text)
+        html = await label_story(StoryHighlights(story=text))
         return HttpResponse(html, content_type="text/html")
         # text_to_highlight = request.POST.get("input_text")
         # _ = StoryHighlights(story=text_to_highlight)
