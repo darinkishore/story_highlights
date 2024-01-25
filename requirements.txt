@@ -12,3 +12,4 @@ bs4
 pytest-asyncio
 gunicorn
 whitenoise
+dj-database-url
