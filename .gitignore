@@ -17,3 +17,5 @@ venv.bak/
 .vscode
 
 .idx
+
+staticfiles
