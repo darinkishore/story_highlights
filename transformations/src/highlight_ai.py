@@ -13,6 +13,9 @@ from transformations.dat.prompts.prompt_elements import (
     system_prompt,
     user_follow_up_prompt,
 )
+from transformations.dat.models import StoryHighlights, Story
+from transformations.dat.prompts.prompt_templates import generate_all_prompts
+from typing import Any
 
 
 load_dotenv()
@@ -22,36 +25,29 @@ def get_last(message_history: List[dict]):
     return message_history[-1]["content"]
 
 
-async def label_story(story: str):
-    _ = await triple_kickstart(story)
-    highlight_schema = get_last(_)
-
-
-
-async def handle_category(initial_prompt, follow_up_prompt):
+async def generate_raw_highlights(initial_prompt, follow_up_prompt):
     message_list = await async_generate(initial_prompt)
     message_list += await async_generate(follow_up_prompt, message_history=message_list)
-    return message_list
+    return message_list[-1]["content"]
 
 
-async def triple_kickstart(story: str = "") -> List[dict[str, str]]:
-    from transformations.dat.prompts.prompt_templates import generate_all_prompts
+async def label_story(story: StoryHighlights) -> str:
+    all_prompts = generate_all_prompts(str(story.story))
 
-    all_prompts = generate_all_prompts(story)
-    message_list = []
-
-    tasks = []
+    highlight_generation_tasks = []
     for category in all_prompts["initial"].keys():
         initial_prompt = all_prompts["initial"][category]
         follow_up_prompt = all_prompts["follow_up"][category]
-        tasks.append(handle_category(initial_prompt, follow_up_prompt))
+        highlight_generation_tasks.append(
+            generate_raw_highlights(initial_prompt, follow_up_prompt)
+        )
 
-    results = await asyncio.gather(*tasks)
+    for task in asyncio.as_completed(highlight_generation_tasks):
+        highlight_content = await task
+        story.add_highlights(highlight_content)
 
-    for result in results:
-        message_list += result
-
-    return message_list
+    story.apply_html_highlights()
+    return story.html_story
 
 
 async def async_generate(prompt: str, max_tokens=500, message_history=None):
