@@ -33,6 +33,15 @@ descriptions = {
     "services, scenarios. Any specific dollar amount should also be labeled.",
     "Water-Related Description": "Label all water body-related descriptions.",
 }
+
+# Add a new category_guidance dictionary here
+category_guidance = {
+    "Positive Description": "Focus on identifying adjectives and adverbs that convey a positive sentiment or describe something favorable.",
+    "Negative Description": "Look for verbs, adjectives, and adverbs that have a negative connotation or describe unsettling scenarios.",
+    "Nature Description": "Highlight descriptions related to the natural world, such as flora, fauna, and natural landscapes.",
+    "Money and Wealth": "Identify any references to financial status, luxury items, or explicit monetary values.",
+    "Water-Related Description": "Label descriptions that pertain to bodies of water or water-related activities."
+}
 system_prompt = (
     "You are an Labeling System Specialist, who helps create interesting stories by labeling their "
     "individual parts for future post processing, according to a strict ruleset. You are meticulous and "
