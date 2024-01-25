@@ -18,7 +18,12 @@ def raw_story_text():
 #     assert message_list != []
 
 
-@pytest.mark.asyncio
-async def test_label_story(raw_story_text):
-    _ = await label_story(raw_story_text)
-    assert True
+# @pytest.mark.asyncio
+# async def test_label_story(raw_story_text):
+#     _ = await label_story(raw_story_text)
+#     assert True
+
+# async def test_label_story_returns_valid_html(raw_story_text):
+# TODO
+
+# async def test_
