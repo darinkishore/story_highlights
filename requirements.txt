@@ -10,3 +10,5 @@ pytest-django
 rapidfuzz
 bs4
 pytest-asyncio
+gunicorn
+whitenoise
