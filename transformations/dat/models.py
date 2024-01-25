@@ -22,6 +22,9 @@ class Story(BaseModel):
             data["story"] = data["story"].replace(title, "", 1).strip()
             return data
 
+    def __str__(self):
+        return f"{self.title}\n\n{self.story}"
+
 
 class Highlight(BaseModel):
     label: str
