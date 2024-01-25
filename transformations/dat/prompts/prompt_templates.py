@@ -3,6 +3,7 @@ from transformations.dat.prompts.prompt_elements import (
     characters,
     plot_elements,
     descriptions,
+    category_guidance,
 )
 
 categories = {
@@ -35,6 +36,8 @@ def generate_category_plan_prompt(story, category_name, category_labels):
         "so think carefully!\n\n"
     )
     prompt += "# Labeling Rules for Reddit Stories\n\n"
+    prompt += f"## Category Guidance for {category_name}\n\n"
+    prompt += f"{category_guidance[category_name]}\n\n"
     prompt += generate_label_section(category_name, category_labels)
     prompt += f"\n\n## Reddit Story\n```\n{story}\n```\n\n"
     prompt += (
