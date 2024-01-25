@@ -5,9 +5,9 @@ from transformations.dat.reference_stories.reference import reference_stories
 from loguru import logger
 
 
-@pytest.fixture
-def raw_story_text():
-    return reference_stories[0][0]
+# @pytest.fixture
+# def raw_story_text():
+#     return reference_stories[0][0]
 
 
 # @pytest.mark.asyncio
