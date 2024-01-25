@@ -14,7 +14,6 @@ from pathlib import Path
 import os
 
 from dotenv import load_dotenv
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -91,9 +90,14 @@ WSGI_APPLICATION = "vercel_app.wsgi.app"
 # environments like Vercel. You can use a database over HTTP, hosted elsewhere.
 
 DATABASES = {
-    "default": dj_database_url.parse(
-        "postgres://postgres.cstcatjqoomjltsckxfj:9pfkViARzuRQVzhpYsHV@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
-    )
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.environ.get("DJANGO_DATABASE_NAME", "postgres"),
+        "USER": os.environ.get("DJANGO_DATABASE_USER", "postgres"),
+        "PASSWORD": os.environ.get("DJANGO_DATABASE_PASSWORD", ""),
+        "HOST": os.environ.get("DJANGO_DATABASE_HOST", "localhost"),
+        "PORT": os.environ.get("DJANGO_DATABASE_PORT", "5432"),
+    }
 }
 
 # Password validation
