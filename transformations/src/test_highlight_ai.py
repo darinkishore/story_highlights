@@ -2,7 +2,6 @@ import pytest
 from transformations.src.highlight_ai import *
 from transformations.dat.models import StoryHighlights
 from transformations.dat.reference_stories.reference import reference_stories
-from loguru import logger
 
 
 # @pytest.fixture
