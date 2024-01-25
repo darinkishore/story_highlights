@@ -77,6 +77,19 @@ class StoryHighlights(BaseModel):
         from transformations.dat.colors import get_color_mapping
 
         keyword_processor = KeywordProcessor()
+        from transformations.dat.prompts.prompt_elements import characters, plot_elements, descriptions
+        def get_highlight_priority(label):
+            if label in characters:
+                return 1
+            elif label in plot_elements:
+                return 2
+            elif label in descriptions:
+                return 3
+            else:
+                return 4
+
+        self.highlights.sort(key=lambda highlight: get_highlight_priority(highlight.label))
+
         for highlight in self.highlights:
             try:
                 color = get_color_mapping(highlight.label)
