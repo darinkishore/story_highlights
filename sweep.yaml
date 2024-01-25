@@ -25,4 +25,4 @@ description: 'This project is a Django web application that processes and transf
 draft: False
 
 # This is a list of directories that Sweep will not be able to edit.
-blocked_dirs: [example, vercel_app, static]
+blocked_dirs: [example, static]
