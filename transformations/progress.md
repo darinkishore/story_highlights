@@ -8,10 +8,11 @@
         - an example from example_gen.py for each category in categories dict (use the get_markdown method to get a perfectly formatted example!!!!)
         - (see: test_example_gen.py) to understand how to implement
     - [x] run off all 3 at once, asynchronously (in transformations/src/highlight_ai.py), turn 
-    - [ ] parse highlights for each story
-    - [ ] merge with no tiebreaking logic, save the HTML
+    - [x] parse highlights for each story
+    - [x] merge with no tiebreaking logic, save the HTML
+- [x] return the HTML of the combined highlights in views.py
+- [ ] Add meta guidance for each category (ie: add it to the initial planning prompt per category)
 - [ ] implement tiebreaking logic when merging multiple disparate sets of highlights
-- [ ] return the HTML of the combined highlights in views.py
 - [ ] verify site works, add basic auth
 - [ ] deploy
 - [ ] finish edit 1 and 2
