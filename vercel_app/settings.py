@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 
 from dotenv import load_dotenv
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -89,8 +90,11 @@ WSGI_APPLICATION = "vercel_app.wsgi.app"
 # Note: Django modules for using databases are not support in serverless
 # environments like Vercel. You can use a database over HTTP, hosted elsewhere.
 
-DATABASES = {}
-
+DATABASES = {
+    "default": dj_database_url.parse(
+        "postgres://postgres.cstcatjqoomjltsckxfj:9pfkViARzuRQVzhpYsHV@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
