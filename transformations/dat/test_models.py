@@ -89,3 +89,37 @@ def test_apply_html_tags(story_text, raw_highlights):
     for label in nice.highlights:
         color = get_color_mapping(label.label)  # Use the function to get the color
         assert f'<span style="color:{color};">{label.excerpt}</span>' in nice.html_story
+@pytest.mark.parametrize(
+    "highlight_labels, expected_html_order",
+    [
+        (
+            ["descriptions", "plot_elements", "characters"],
+            ['<span style="color:#color_characters;">characters</span>',
+             '<span style="color:#color_plot_elements;">plot_elements</span>',
+             '<span style="color:#color_descriptions;">descriptions</span>']
+        ),
+        (
+            ["characters", "characters", "plot_elements"],
+            ['<span style="color:#color_characters;">characters</span>',
+             '<span style="color:#color_characters;">characters</span>',
+             '<span style="color:#color_plot_elements;">plot_elements</span>']
+        ),
+        (
+            ["non_category", "plot_elements", "characters"],
+            ['<span style="color:#color_characters;">characters</span>',
+             '<span style="color:#color_plot_elements;">plot_elements</span>',
+             '<span style="color:#color_non_category;">non_category</span>']
+        ),
+    ]
+)
+def test_apply_html_highlights_tiebreaking_logic(highlight_labels, expected_html_order):
+    story_highlights = StoryHighlights(story="Test Story")
+    for label in highlight_labels:
+        story_highlights.highlights.append(Highlight(label=label, excerpt=label))
+    story_highlights.apply_html_highlights()
+    html_story = story_highlights.html_story
+    for expected_html in expected_html_order:
+        assert expected_html in html_story
+    # Check if the order in the html_story is as expected
+    ordered_html = "".join(expected_html_order)
+    assert ordered_html in html_story.replace("\n", "")
