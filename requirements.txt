@@ -13,3 +13,4 @@ pytest-asyncio
 gunicorn
 whitenoise
 dj-database-url
+psycopg2-binary==2.9.5
