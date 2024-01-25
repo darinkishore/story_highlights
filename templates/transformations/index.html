@@ -20,6 +20,7 @@ hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
           Input Text
         </label>
         <textarea
+        name="input_text"
           class="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[200px]"
           id="input-text"
           placeholder="Enter your text here..."
@@ -33,6 +34,7 @@ hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
           Output Text
         </label>
         <div
+        name="output_text"
           class="overflow-auto flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[200px]"
           id="output-text"
         >
