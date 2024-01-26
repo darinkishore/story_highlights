@@ -3,7 +3,7 @@ from .logger import logger
 from django.shortcuts import render
 from django.http import HttpResponse
 
-from .dat.models import StoryHighlights
+from .models import DjangoStory, DjangoStoryHighlights
 from django.template import loader
 from transformations.src.highlight_ai import label_story
 from asgiref.sync import async_to_sync
@@ -23,7 +23,18 @@ async def highlight(request):
     response_data = None
     if request.method == "POST" and request.htmx:
         text = request.POST.get("input_text")
-        html = await label_story(StoryHighlights(story=text))
+        # Create a DjangoStory instance and save it
+        django_story = DjangoStory(story=text)
+        django_story.save()
+        
+        # Create a DjangoStoryHighlights instance and associate it with the DjangoStory
+        django_story_highlights = DjangoStoryHighlights(story=django_story)
+        django_story_highlights.save()
+        
+        # Use the DjangoStoryHighlights instance for labeling
+        html = await label_story(django_story_highlights)
+        django_story_highlights.html_story = html
+        django_story_highlights.save()
         response_data = html
         response = HttpResponse(response_data, content_type="text/html")
         logger.debug(f"Outgoing response - Status Code: {response.status_code}, Content Type: {response['Content-Type']}")
