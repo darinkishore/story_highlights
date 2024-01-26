@@ -1,6 +1,8 @@
+from transformations.dat.colors import color_mappings
 from typing import List, Any, Optional, Union
 import rapidfuzz
 from pydantic import BaseModel, field_validator, model_validator
+from transformations.dat.prompts.prompt_elements import characters, plot_elements, descriptions
 import re
 from flashtext import KeywordProcessor
 
@@ -75,17 +77,39 @@ class StoryHighlights(BaseModel):
 
     def apply_html_highlights(self):
         from transformations.dat.colors import get_color_mapping
+        from transformations.dat.prompts.prompt_elements import characters, plot_elements, descriptions
 
+        priority_mapping = {**{label: 3 for label in characters.keys()},
+                            **{label: 2 for label in plot_elements.keys()},
+                            **{label: 1 for label in descriptions.keys()}}
+
+        self.highlights.sort(key=lambda highlight: priority_mapping.get(highlight.label, 0), reverse=True)
+
+        used_excerpts = set()
         keyword_processor = KeywordProcessor()
         for highlight in self.highlights:
             try:
                 color = get_color_mapping(highlight.label)
-            except KeyError as e:
-                raise KeyError(
-                    f"Label {highlight.label} not found in color mapping."
-                ) from e
+            except KeyError:
+                # Use Levenshtein distance to handle potential key errors
+                closest_match = rapidfuzz.process.extractOne(
+                    highlight.label,
+                    color_set,
+                    score_cutoff=2,  # Note the Levenshtein threshold
+                    scorer=rapidfuzz.distance.Levenshtein.distance
+                )
+                if closest_match:
+                    color = color_mappings[closest_match[0]]
+                else:
+                    raise KeyError(f"Label {highlight.label} not found in color mapping.")
             html_tag = f'<span style="color:{color};">{highlight.excerpt}</span>'
             keyword_processor.add_keyword(highlight.excerpt, html_tag)
+
+        for highlight in self.highlights:
+            if highlight.excerpt not in used_excerpts:
+                html_tag = f'<span style="color:{color};">{highlight.excerpt}</span>'
+                keyword_processor.add_keyword(highlight.excerpt, html_tag)
+                used_excerpts.add(highlight.excerpt)
 
         html_story = keyword_processor.replace_keywords(
             self.story.title + "\n" + self.story.story
