@@ -4,6 +4,7 @@ from pydantic import BaseModel, field_validator, model_validator
 import re
 from flashtext import KeywordProcessor
 
+from .logger import logger
 from transformations.dat.colors import color_set, get_color_mapping
 
 
@@ -42,6 +43,7 @@ class StoryHighlights(BaseModel):
 
     @model_validator(mode="before")
     def process_story(cls, data):
+        logger.debug(f"Processing story: {data['story']}")
         if isinstance(data["story"], Story):
             return data
         else:
@@ -55,13 +57,15 @@ class StoryHighlights(BaseModel):
         return markdown_text
 
     def add_highlights(self, raw_highlight_response: str):
+        logger.debug(f"Adding highlights from response: {raw_highlight_response}")
         label_pattern = re.compile(r'- \*\*(.*?)\*\*: "(.*?)"(?=\s|$)')
 
         for match in label_pattern.finditer(raw_highlight_response):
             label, excerpt = match.groups()
             try:
                 get_color_mapping(label)
-            except KeyError:
+            except KeyError as e:
+                logger.exception("Failed to get color mapping for label: {label}", exc_info=e)
                 closest_match = rapidfuzz.process.extractOne(
                     label,
                     color_set,
@@ -74,6 +78,7 @@ class StoryHighlights(BaseModel):
             self.highlights.append(Highlight(label=label, excerpt=excerpt))
 
     def apply_html_highlights(self):
+        logger.debug("Applying HTML highlights.")
         from transformations.dat.colors import get_color_mapping
 
         keyword_processor = KeywordProcessor()
@@ -81,9 +86,8 @@ class StoryHighlights(BaseModel):
             try:
                 color = get_color_mapping(highlight.label)
             except KeyError as e:
-                raise KeyError(
-                    f"Label {highlight.label} not found in color mapping."
-                ) from e
+                logger.error(f"Label {highlight.label} not found in color mapping.", exc_info=e)
+                raise
             html_tag = f'<span style="color:{color};">{highlight.excerpt}</span>'
             keyword_processor.add_keyword(highlight.excerpt, html_tag)
 
