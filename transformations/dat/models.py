@@ -80,13 +80,16 @@ class StoryHighlights(BaseModel):
             self.highlights.append(Highlight(label=label, excerpt=excerpt))
 
     def apply_html_highlights(self):
+        logger.info('Starting HTML highlight application process')
         from transformations.dat.colors import get_color_mapping
 
         keyword_processor = KeywordProcessor()
         for highlight in self.highlights:
             try:
                 color = get_color_mapping(highlight.label)
+                logger.debug(f'Color {color} applied to highlight: {highlight.excerpt}')
             except KeyError as e:
+                logger.error(f'KeyError for label: {highlight.label}')
                 raise KeyError(
                     f"Label {highlight.label} not found in color mapping."
                 ) from e
