@@ -74,7 +74,7 @@ def generate_follow_up_prompt(category):
     example = best_example_picker.get_markdown_example()
     prompt = "Thank you! Now, please proceed to label the reddit story, ensuring thoroughness and precision.\n\n"
     prompt += (
-        'Your labels should be formatted like so: `**Label**: "Specific excerpt"`\n"'
+        'Your labels should be formatted like so: `**Label**: "Specific excerpt"`\n'
         "A well-done example is provided below: \n\n"
     )
     prompt += "```\n"
