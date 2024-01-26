@@ -1,7 +1,8 @@
 import pytest
 from transformations.dat.models import Highlight, StoryHighlights, Story, re
 from transformations.dat.reference_stories.reference import reference_stories
-from transformations.dat.colors import get_color_mapping  # Import the function
+from transformations.dat.colors import get_color_mapping
+from transformations.dat.prompts.prompt_elements import characters, plot_elements, descriptions  # Import tiebreaking dictionaries
 
 
 @pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
@@ -89,3 +90,29 @@ def test_apply_html_tags(story_text, raw_highlights):
     for label in nice.highlights:
         color = get_color_mapping(label.label)  # Use the function to get the color
         assert f'<span style="color:{color};">{label.excerpt}</span>' in nice.html_story
+
+@pytest.mark.parametrize(
+    "story_text, raw_highlights, expected_overrides",
+    [
+        (
+            'Story with simple override',
+            '- **descriptions**: "The sky"\n- **plot_elements**: "The sky was clear"\n- **characters**: "Alice looked at the sky"',
+            [("The sky", "characters")]
+        ),
+        (
+            'Story with Levenshtein rule',
+            '- **charcters**: "Bob looked at the stars"\n- **plot_elemnts**: "The stars in the night"',
+            [("Bob looked at the stars", "characters"), ("The stars in the night", "plot_elements")]
+        )
+        # Add more test cases if needed.
+    ]
+)
+def test_tiebreaking_logic(story_text, raw_highlights, expected_overrides):
+    story_highlights = StoryHighlights(story=story_text)
+    story_highlights.add_highlights(raw_highlights)
+    story_highlights.apply_html_highlights()
+
+    for excerpt, expected_label in expected_overrides:
+        actual_highlight = next((hl for hl in story_highlights.highlights if hl.excerpt == excerpt), None)
+        assert actual_highlight is not None, f'Expected highlight "{excerpt}" not found'
+        assert actual_highlight.label == expected_label, f'For highlight "{excerpt}", expected "{expected_label}", but found "{actual_highlight.label}"'
