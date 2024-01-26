@@ -5,6 +5,8 @@ import re
 from flashtext import KeywordProcessor
 
 from transformations.dat.colors import color_set, get_color_mapping
+from transformations.dat.prompts.prompt_elements import characters, plot_elements, descriptions
+from transformations.dat.prompts.prompt_templates import categories
 
 
 class Story(BaseModel):
@@ -75,6 +77,21 @@ class StoryHighlights(BaseModel):
 
     def apply_html_highlights(self):
         from transformations.dat.colors import get_color_mapping
+
+        # Define priority mapping for categories
+        priority_mapping = {
+            'characters': 1,
+            'plot_elements': 2,
+            'descriptions': 3
+        }
+
+        # Sort highlights based on priority
+        self.highlights.sort(key=lambda highlight: priority_mapping[
+            'characters' if highlight.label in characters else
+            'plot_elements' if highlight.label in plot_elements else
+            'descriptions' if highlight.label in descriptions else
+            'descriptions'  # default to descriptions if not found
+        ])
 
         keyword_processor = KeywordProcessor()
         for highlight in self.highlights:
