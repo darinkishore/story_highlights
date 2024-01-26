@@ -112,6 +112,7 @@ class BestExamplePicker:
         return None
 
     def get_story_model_example(self):
+        logger.info('Starting story model example generation')
         best_story_title = self.get_best_story_for_category()
         for story in self.stories:
             if story.story.title == best_story_title:
@@ -125,7 +126,9 @@ class BestExamplePicker:
                 new_story = StoryHighlights(
                     story=story.story, highlights=filtered_highlights
                 )
+                logger.info(f'Story model example generated: {new_story}')
                 return new_story
+        logger.info('No story model example found')
         return None
 
 
