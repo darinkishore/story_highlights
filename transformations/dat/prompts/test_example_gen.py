@@ -43,3 +43,25 @@ def test_merged_best_examples():
     soup1 = BeautifulSoup(gold_std.html_story, "html.parser")
     soup2 = BeautifulSoup(merged_example.html_story, "html.parser")
     assert str(soup1) == str(soup2), "HTML does not match"
+
+from transformations.dat.models import Highlight
+
+def test_tiebreaking_logic():
+    # Create a mock story with overlapping highlights
+    mock_story = 'The quick brown fox jumps over the lazy dog.'
+    mock_highlights = [
+        Highlight(label='Descriptions', excerpt='quick brown fox'),
+        Highlight(label='Plot Elements', excerpt='quick brown'),
+        Highlight(label='Characters', excerpt='brown fox')
+    ]
+
+    # Instantiate StoryHighlights with mock data
+    story_highlights = StoryHighlights(story=Story(story=mock_story), highlights=mock_highlights)
+
+    # Apply the highlights with the tiebreaking logic
+    story_highlights.apply_html_highlights()
+
+    # Verify that the correct highlight is applied based on priority
+    soup = BeautifulSoup(story_highlights.html_story, 'html.parser')
+    expected_html = '<span style="color:#CharactersColor;">brown fox</span>'
+    assert expected_html in str(soup), 'Tiebreaking logic failed'
