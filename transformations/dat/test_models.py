@@ -80,7 +80,28 @@ def process_story_highlights_test(story_text, raw_highlights):
     )
 
 
-@pytest.mark.parametrize("story_text, raw_highlights", reference_stories)
+from rapidfuzz import fuzz
+
+@pytest.mark.parametrize("story_highlight_data", [
+    ("Character: Harry\nHarry was brave.", [("character", "Harry", 1), ("plot_element", "brave", 2), ("description", "was brave", 3)]),
+    ("Dialogue: 'It's over, Anakin!'", [("character", "It's over, Anakin!", 1), ("plot_element", "over", 2), ("description", "It's", 3)]),
+    # More cases can be added
+])
+def test_tiebreaking_html_highlights(story_highlight_data):
+    story_text, highlights_data = story_highlight_data
+    story_highlights = StoryHighlights(story=story_text)
+    for label, excerpt, priority in highlights_data:
+        story_highlights.add_highlights(f'- **{label}**: "{excerpt}"')
+    story_highlights.apply_html_highlights()
+    for label, excerpt, priority in highlights_data:
+        color = get_color_mapping(label)  # Get the color mapping
+        html_tag = f'<span style="color:{color};">{excerpt}</span>'
+        # Asserting the presence of the correct HTML tags
+        if priority == 1 or (priority > 1 and 
+            not any(high.label == label and fuzz.ratio(high.excerpt, excerpt) > 80 for high in story_highlights.highlights)):
+            assert html_tag in story_highlights.html_story
+        else:
+            assert html_tag not in story_highlights.html_story
 def test_apply_html_tags(story_text, raw_highlights):
     nice = StoryHighlights(story=story_text)
     nice.add_highlights(raw_highlights)
