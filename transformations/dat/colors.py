@@ -1,4 +1,5 @@
 import rapidfuzz
+from loguru import logger
 
 # TODO: question: how handle bold?
 
@@ -33,6 +34,7 @@ color_set = set(color_mappings.keys())
 
 
 def get_color_mapping(key):
+    logger.info(f'Entering get_color_mapping with key: {key}')
     # if its other male or other female > 3 then subtract 3
     if key[-1].isdigit():
         ind = int(key[-1])
@@ -41,8 +43,10 @@ def get_color_mapping(key):
             key = f"{key} {ind - 3}"
     try:
         color = color_mappings[key]
+        logger.info(f'Successfully retrieved color: {color}')
     except KeyError:
         # use levenshtein distance to find the closest match
+        logger.warning(f'Key "{key}" not found in color mappings. Using rapidfuzz to find closest match.')
         closest_match = rapidfuzz.process.extractOne(
             key,
             color_set,
@@ -53,6 +57,7 @@ def get_color_mapping(key):
             raise KeyError(f"Label {key} not found in color mapping.")
         else:
             color = color_mappings[closest_match[0]]
+            logger.info(f'Closest match found for key "{key}": {closest_match[0]}')
     return color
 
 
