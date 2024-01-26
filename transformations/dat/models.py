@@ -5,6 +5,7 @@ import re
 from flashtext import KeywordProcessor
 
 from transformations.dat.colors import color_set, get_color_mapping
+from transformations.dat.prompts.prompt_elements import characters, plot_elements, descriptions
 
 
 class Story(BaseModel):
@@ -74,10 +75,41 @@ class StoryHighlights(BaseModel):
             self.highlights.append(Highlight(label=label, excerpt=excerpt))
 
     def apply_html_highlights(self):
-        from transformations.dat.colors import get_color_mapping
+        def get_label_priority(label):
+            if label in characters:
+                return 1
+            elif label in plot_elements:
+                return 2
+            elif label in descriptions:
+                return 3
+            else:
+                raise ValueError(f"Label {label} does not belong to any known category.")
+
+        sorted_highlights = sorted(self.highlights, key=lambda h: (-len(h.excerpt), get_label_priority(h.label)))
+        prior_highlights = sorted_highlights[:]
+        tiebroken_highlights = []
+
+        for i, high in enumerate(sorted_highlights):
+            is_unique = True
+            for j, higher_high in enumerate(prior_highlights):
+                if j >= i:
+                    break
+                if high.excerpt in higher_high.excerpt and len(high.excerpt) < len(higher_high.excerpt):
+                    prior_highlights[j] = high
+                    is_unique = False
+                    break
+            if is_unique:
+                tiebroken_highlights.append(high)
 
         keyword_processor = KeywordProcessor()
-        for highlight in self.highlights:
+            except KeyError as e:
+                raise KeyError(
+                    f"Label {highlight.label} not found in color mapping."
+                ) from e
+            html_tag = f'<span style="color:{color};">{highlight.excerpt}</span>'
+            keyword_processor.add_keyword(highlight.excerpt, html_tag)
+
+        for highlight in tiebroken_highlights:
             try:
                 color = get_color_mapping(highlight.label)
             except KeyError as e:
@@ -90,6 +122,7 @@ class StoryHighlights(BaseModel):
         html_story = keyword_processor.replace_keywords(
             self.story.title + "\n" + self.story.story
         )
+      
 
         self.html_story = html_story
 
