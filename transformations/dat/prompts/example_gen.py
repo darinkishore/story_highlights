@@ -64,9 +64,11 @@ class BestExamplePicker:
         self.markdown_example = self.get_markdown_example()
 
     def update_label_counts(self):
+        logger.info('Updating label counts for stories')
         label_counts = {}
         for story_highlight in self.stories:
             for highlight in story_highlight.highlights:
+                logger.debug(f"Counting label: {highlight.label} in story: {story_highlight.story.title}")
                 if highlight.label in self.category:
                     label_counts[story_highlight.story.title] = (
                         label_counts.get(story_highlight.story.title, 0) + 1
