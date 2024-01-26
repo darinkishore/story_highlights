@@ -89,3 +89,33 @@ def test_apply_html_tags(story_text, raw_highlights):
     for label in nice.highlights:
         color = get_color_mapping(label.label)  # Use the function to get the color
         assert f'<span style="color:{color};">{label.excerpt}</span>' in nice.html_story
+
+@pytest.mark.parametrize("story_to_test", [
+    # Mock story with overlapping highlights
+    (
+        "Once there was an entity named Zorp. Zorp was a mischievous character.",
+        (
+            '- **character**: "Zorp"',
+            '- **description**: "entity"',
+            '- **plot_element**: "mischievous character"'
+        )
+    )
+])
+def test_tiebreaking_logic(story_to_test):
+    story_text, raw_highlights = story_to_test
+    nice = StoryHighlights(story=story_text)
+    for raw_highlight in raw_highlights:
+        nice.add_highlights(raw_highlight)
+    nice.apply_html_highlights()
+
+    expected_html_elements = [
+        '<span style="color:#characters_color;">Zorp</span>',
+        '<span style="color:#plot_elements_color;">mischievous character</span>'
+    ]
+
+    # Check if resulting HTML contains correct highlights according to priority rules
+    for element in expected_html_elements:
+        assert element in nice.html_story
+
+    # Ensure non-overlapping highlights are not affected
+    assert '<span style="color:#descriptions_color;">entity</span>' not in nice.html_story
