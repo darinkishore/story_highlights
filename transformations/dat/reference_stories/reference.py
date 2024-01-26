@@ -1,3 +1,6 @@
+from .logger import logger
+
+logger.debug("Loading reference stories")
 reference_stories = [
     (
         r"""Present-day 2038, “Net Neutrality” has been unalived for almost two decades. A small rebel group travels back to 2017 to try and change it all…
