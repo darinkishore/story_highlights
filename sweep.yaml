@@ -7,6 +7,7 @@ rules:
   - "Refactor large functions to be more modular."
   - "All leftover TODOs in the codebase should be resolved."
   - "All code should be documented."
+  - "All data manipulation and server logic should be logged via Loguru"
 
 # This is the branch that Sweep will develop from and make pull requests to. Most people use 'main' or 'master' but some users also use 'dev' or 'staging'.
 branch: 'main'
