@@ -13,7 +13,7 @@ from transformations.dat.prompts.prompt_elements import (
     system_prompt,
     user_follow_up_prompt,
 )
-from transformations.dat.models import StoryHighlights, Story
+from .models import DjangoStoryHighlights, DjangoStory
 from transformations.dat.prompts.prompt_templates import generate_all_prompts
 from typing import Any
 
@@ -31,8 +31,8 @@ async def generate_raw_highlights(initial_prompt, follow_up_prompt):
     return message_list[-1]["content"]
 
 
-async def label_story(story: StoryHighlights) -> str:
-    all_prompts = generate_all_prompts(str(story.story))
+async def label_story(story: DjangoStoryHighlights) -> str:
+    all_prompts = generate_all_prompts(story.story.story)
 
     highlight_generation_tasks = []
     for category in all_prompts["initial"].keys():
@@ -45,8 +45,12 @@ async def label_story(story: StoryHighlights) -> str:
     for task in asyncio.as_completed(highlight_generation_tasks):
         highlight_content = await task
         story.add_highlights(highlight_content)
+        # Save highlight instances for DjangoStoryHighlights
+        story.save()
 
     story.apply_html_highlights()
+    # Save the DjangoStoryHighlights instance after applying HTML highlights
+    story.save()
     return story.html_story
 
 
