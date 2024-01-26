@@ -1,4 +1,5 @@
 from transformations.dat.prompts.example_gen import BestExamplePicker
+from .logger import logger
 from transformations.dat.prompts.prompt_elements import (
     characters,
     plot_elements,
@@ -15,6 +16,7 @@ categories = {
 
 
 def generate_label_section(title, labels_dict):
+    logger.debug(f"Generating label section for: {title}")
     label_section = f"#### {title}\n"
     for label, description in labels_dict.items():
         label_section += f"- **{label}**: {description}\n"
@@ -22,6 +24,7 @@ def generate_label_section(title, labels_dict):
 
 
 def generate_category_plan_prompt(story, category_name, category_labels):
+    logger.debug(f"Generating category plan prompt for: {category_name}")
     prompt = ""
     prompt += "You are tasked with labeling a reddit story."
     prompt += "Your labels will be used to create a dynamic, engaging TikTok video by mapping them to colors."
