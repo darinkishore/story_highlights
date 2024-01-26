@@ -57,13 +57,16 @@ class StoryHighlights(BaseModel):
         return markdown_text
 
     def add_highlights(self, raw_highlight_response: str):
+        logger.info(f'Starting highlight addition - Processing raw_highlight_response: {raw_highlight_response}')
         label_pattern = re.compile(r'- \*\*(.*?)\*\*: "(.*?)"(?=\s|$)')
 
         for match in label_pattern.finditer(raw_highlight_response):
             label, excerpt = match.groups()
             try:
-                get_color_mapping(label)
+                color = get_color_mapping(label)
+                logger.info(f'Mapping successful - Label: {label}, Color: {color}')
             except KeyError:
+                logger.warning(f'Label "{label}" caused KeyError. Finding closest match.')
                 closest_match = rapidfuzz.process.extractOne(
                     label,
                     color_set,
@@ -72,6 +75,7 @@ class StoryHighlights(BaseModel):
                 )
                 if closest_match is not None:
                     label = closest_match[0]
+                    logger.info(f'Closest match for label "{label}": {closest_match[0]}')
 
             self.highlights.append(Highlight(label=label, excerpt=excerpt))
 
