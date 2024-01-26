@@ -1,5 +1,6 @@
 from transformations.dat.reference_stories.reference import reference_stories
 from transformations.dat.models import StoryHighlights
+from loguru import logger
 
 
 """
@@ -48,6 +49,7 @@ class BestExamplePicker:
     """
 
     def __init__(self, category):
+        logger.info(f"Initializing BestExamplePicker with category: {category}")
         self.category = category
         if any(
             key.lower()
@@ -58,6 +60,7 @@ class BestExamplePicker:
         self.stories = [StoryHighlights(story=story[0]) for story in reference_stories]
         for i, story in enumerate(self.stories):
             story.add_highlights(reference_stories[i][1])
+            logger.info(f"Added highlights for story: {story.story.title}")
         self.markdown_example = self.get_markdown_example()
 
     def update_label_counts(self):
