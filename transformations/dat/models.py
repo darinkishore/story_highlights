@@ -5,6 +5,18 @@ import re
 from flashtext import KeywordProcessor
 
 from transformations.dat.colors import color_set, get_color_mapping
+from transformations.dat.prompts.prompt_elements import characters, plot_elements, descriptions
+from transformations.dat.prompts.prompt_templates import categories
+
+def get_category(label: str) -> str:
+    if label in characters:
+        return 'characters'
+    elif label in plot_elements:
+        return 'plot_elements'
+    elif label in descriptions:
+        return 'descriptions'
+    else:
+        raise ValueError(f"Label '{label}' does not belong to any recognized category.")
 
 
 class Story(BaseModel):
@@ -77,7 +89,25 @@ class StoryHighlights(BaseModel):
         from transformations.dat.colors import get_color_mapping
 
         keyword_processor = KeywordProcessor()
+        processed_highlights = []
         for highlight in self.highlights:
+            highlight_category = get_category(highlight.label)
+            overlap = False
+            for existing_highlight in processed_highlights:
+                existing_category = get_category(existing_highlight.label)
+                # according to prompt, highlights may overlap, so here we assume this function exists
+                if excerpts_overlap(highlight.excerpt, existing_highlight.excerpt):
+                    # Implement tiebreaking logic based on categories
+                    category_priority = {'characters': 3, 'plot_elements': 2, 'descriptions': 1}
+                    if category_priority[highlight_category] > category_priority[existing_category]:
+                        # Replace existing highlight with the current one
+                        processed_highlights.remove(existing_highlight)
+                        processed_highlights.append(highlight)
+                        overlap = True
+                        break
+            if not overlap:
+                # Add the current highlight to processed_highlights
+                processed_highlights.append(highlight)
             try:
                 color = get_color_mapping(highlight.label)
             except KeyError as e:
@@ -85,6 +115,12 @@ class StoryHighlights(BaseModel):
                     f"Label {highlight.label} not found in color mapping."
                 ) from e
             html_tag = f'<span style="color:{color};">{highlight.excerpt}</span>'
+            keyword_processor.add_keyword(highlight.excerpt, html_tag)
+
+        # Apply the highlighted HTML tags
+        for highlight in processed_highlights:
+            color = get_color_mapping(highlight.label)
+            html_tag = f'<span style="color:{color}">{highlight.excerpt}</span>'
             keyword_processor.add_keyword(highlight.excerpt, html_tag)
 
         html_story = keyword_processor.replace_keywords(
