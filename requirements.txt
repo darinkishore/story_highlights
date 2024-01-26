@@ -3,7 +3,6 @@ openai
 python-dotenv
 pydantic==2.5.3
 requests
-spacy
 flashtext
 pytest
 pytest-django
@@ -13,4 +12,7 @@ pytest-asyncio
 gunicorn
 whitenoise
 dj-database-url
-psycopg2-binary==2.9.5
+psycopg2-binary==2.9.6
+whitenoise
+django-htmx
+loguru
