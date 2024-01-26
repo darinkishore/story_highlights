@@ -1,3 +1,6 @@
+from .logger import logger
+
+logger.debug("Loading prompt elements for characters")
 characters = {
     "Main Male Character": "Label name/pronouns/dialogue.",
     "Male Character 1|2|3|n": "For each male side character, label their individual name/pronouns/dialogue as Male Character n. (where n is a consistently assigned number for their character in order of appearance)",
@@ -9,6 +12,7 @@ characters = {
     "turns into the antagonist/villain.",
     "Groups of People": "Label references to and dialogue from groups of people.",
 }
+logger.debug("Loading prompt elements for plot elements")
 plot_elements = {
     "Danger/Violence": "Label acts of violence, violent verbs/adjectives, any words that indicate or "
     "contribute to a feel of physical/emotional danger",
@@ -23,6 +27,7 @@ plot_elements = {
     "Negative Time Reference": "Label references to a particular time, event, or memory that are remembered "
     "unfavorably or anticipated with dread.",
 }
+logger.debug("Loading prompt elements for descriptions")
 descriptions = {
     "Positive Description": "Label adjectives and adverbs that are in a positive context, or describe something "
     "positive/happy in general.",
@@ -33,12 +38,14 @@ descriptions = {
     "services, scenarios. Any specific dollar amount should also be labeled.",
     "Water-Related Description": "Label all water body-related descriptions.",
 }
+logger.debug("Loading system prompt")
 system_prompt = (
     "You are an Labeling System Specialist, who helps create interesting stories by labeling their "
     "individual parts for future post processing, according to a strict ruleset. You are meticulous and "
     "thorough, and go through the texts you label line by line to extract every detail and fulfill your "
     "stage in the processing pipeline."
 )
+logger.debug("Loading user follow-up prompt")
 user_follow_up_prompt = """Thank you for the planning phase! Now, please proceed to label each line as identified, ensuring thoroughness and precision.
 
 Please use the format `**Label**: "Specific excerpt"`. 
