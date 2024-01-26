@@ -40,6 +40,8 @@ def generate_character_labels(max_characters=10):
     return character_labels
 
 
+from .logger import logger
+
 class BestExamplePicker:
     """
     For each category passed to BestExamplePicker,
@@ -48,6 +50,7 @@ class BestExamplePicker:
     """
 
     def __init__(self, category):
+        logger.debug(f"Selecting best example for category: {category}")
         self.category = category
         if any(
             key.lower()
@@ -82,7 +85,9 @@ class BestExamplePicker:
 
     def get_best_story_for_category(self):
         label_counts = self.update_label_counts()
-        return self.get_best_story(label_counts)
+        best_story_title = self.get_best_story(label_counts)
+        logger.info(f"Best story for category {self.category}: {best_story_title}")
+        return best_story_title
 
     def get_markdown_example(self):
         best_story_title = self.get_best_story_for_category()
