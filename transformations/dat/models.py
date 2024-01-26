@@ -1,3 +1,4 @@
+from transformations import logger
 from typing import List, Any, Optional, Union
 import rapidfuzz
 from pydantic import BaseModel, field_validator, model_validator
@@ -42,6 +43,7 @@ class StoryHighlights(BaseModel):
 
     @model_validator(mode="before")
     def process_story(cls, data):
+        logger.info(f'Processing story of type: {"Story" if isinstance(data["story"], Story) else "str"}')
         if isinstance(data["story"], Story):
             return data
         else:
