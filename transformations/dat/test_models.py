@@ -89,3 +89,17 @@ def test_apply_html_tags(story_text, raw_highlights):
     for label in nice.highlights:
         color = get_color_mapping(label.label)  # Use the function to get the color
         assert f'<span style="color:{color};">{label.excerpt}</span>' in nice.html_story
+
+@pytest.mark.parametrize("story_text, raw_highlights, expected_html", [
+    # Add test cases here
+    # ("story_text", "raw_highlights", "expected_html"),
+])
+def test_tiebreaking_logic_in_html_highlights(story_text, raw_highlights, expected_html):
+    # Create StoryHighlights instance
+    nice = StoryHighlights(story=story_text)
+    # Add raw highlights
+    nice.add_highlights(raw_highlights)
+    # Apply HTML highlights with tiebreaking logic
+    nice.apply_html_highlights()
+    # Assert that the resulting HTML contains the correct tags based on priority
+    assert expected_html in nice.html_story
