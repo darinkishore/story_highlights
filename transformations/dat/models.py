@@ -4,6 +4,8 @@ from pydantic import BaseModel, field_validator, model_validator
 import re
 from flashtext import KeywordProcessor
 
+from transformations.dat.prompts.prompt_templates import categories as highlight_category_mappings
+from transformations.dat.prompts.prompt_elements import characters, plot_elements, descriptions
 from transformations.dat.colors import color_set, get_color_mapping
 
 
@@ -75,6 +77,16 @@ class StoryHighlights(BaseModel):
 
     def apply_html_highlights(self):
         from transformations.dat.colors import get_color_mapping
+
+        # Define the priority for each category
+        category_priority = {'characters': 1, 'plot_elements': 2, 'descriptions': 3}
+
+        # Sort highlights based on priority
+        self.highlights = sorted(
+            self.highlights,
+            key=lambda h: category_priority[highlight_category_mappings[highlight.label]],
+            reverse=True  # Higher priority comes first
+        )
 
         keyword_processor = KeywordProcessor()
         for highlight in self.highlights:
