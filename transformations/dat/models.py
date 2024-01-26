@@ -5,6 +5,7 @@ import re
 from flashtext import KeywordProcessor
 
 from transformations.dat.colors import color_set, get_color_mapping
+from transformations.dat.utils import get_highlight_priority
 
 
 class Story(BaseModel):
@@ -77,7 +78,19 @@ class StoryHighlights(BaseModel):
         from transformations.dat.colors import get_color_mapping
 
         keyword_processor = KeywordProcessor()
+        # Sort highlights by priority
+        self.highlights.sort(key=lambda highlight: get_highlight_priority(highlight.label), reverse=True)
+        
+        # Track applied excerpts to handle overlaps
+        applied_excerpts = set()
+        
         for highlight in self.highlights:
+            # Check if the excerpt is already applied with a higher priority
+            if highlight.excerpt in applied_excerpts:
+                continue
+        
+            # Add the excerpt to the applied set
+            applied_excerpts.add(highlight.excerpt)
             try:
                 color = get_color_mapping(highlight.label)
             except KeyError as e:
