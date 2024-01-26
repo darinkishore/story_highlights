@@ -92,6 +92,7 @@ class BestExamplePicker:
         return self.get_best_story(label_counts)
 
     def get_markdown_example(self):
+        logger.info('Starting markdown example generation')
         best_story_title = self.get_best_story_for_category()
         for story in self.stories:
             if story.story.title == best_story_title:
@@ -105,7 +106,9 @@ class BestExamplePicker:
                 new_story = StoryHighlights(
                     story=story.story, highlights=filtered_highlights
                 )
-                return str(new_story)
+                markdown_example = str(new_story)
+                logger.info(f'Markdown example generated: {markdown_example[:100]}...')
+                return markdown_example
         return None
 
     def get_story_model_example(self):
