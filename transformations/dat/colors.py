@@ -46,8 +46,8 @@ def get_color_mapping(key):
         closest_match = rapidfuzz.process.extractOne(
             key,
             color_set,
-            score_cutoff=2,
-            scorer=rapidfuzz.distance.Levenshtein.distance,
+            score_cutoff=100 - (2 * 100 / len(key)),  # Adjusting score_cutoff for Levenshtein
+            scorer=rapidfuzz.distance.Levenshtein.distance
         )
         if closest_match is None:
             raise KeyError(f"Label {key} not found in color mapping.")
