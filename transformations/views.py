@@ -1,5 +1,5 @@
 # transfomations/views.py
-from .logger import logger
+from transformations.dat.logger import logger
 from django.shortcuts import render
 from django.http import HttpResponse
 
