@@ -76,6 +76,7 @@ class BestExamplePicker:
         return label_counts
 
     def get_best_story(self, label_counts):
+        logger.info('Starting best story retrieval process')
         top = 0
         max_story = None
         for key in label_counts.keys():
@@ -83,6 +84,7 @@ class BestExamplePicker:
                 top = label_counts[key]
                 max_story = key
         best_story_title = max_story
+        logger.info(f'Best story found: {best_story_title}')
         return best_story_title
 
     def get_best_story_for_category(self):
