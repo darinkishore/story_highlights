@@ -17,3 +17,5 @@ whitenoise
 django-htmx
 loguru
 django-easy-logging
+django-db-connection-pool[postgresql]
+
