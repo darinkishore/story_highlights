@@ -18,7 +18,7 @@ from dj_easy_log import load_loguru
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env")
+load_dotenv(override=True)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -92,32 +92,33 @@ WSGI_APPLICATION = "vercel_app.wsgi.app"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.environ.get("DJANGO_DATABASE_NAME", "postgres"),
-        "USER": os.environ.get("DJANGO_DATABASE_USER", "postgres"),
-        "PASSWORD": os.environ.get("DJANGO_DATABASE_PASSWORD", ""),
-        "HOST": os.environ.get("DJANGO_DATABASE_HOST", "localhost"),
-        "PORT": os.environ.get("DJANGO_DATABASE_PORT", "5432"),
+        "ENGINE": "dj_db_conn_pool.backends.postgresql",  # "django.db.backends.postgresql_psycopg2",
+        "NAME": os.environ.get("DJANGO_DATABASE_NAME"),
+        "USER": os.environ.get("DJANGO_DATABASE_USER"),
+        "PASSWORD": os.environ.get("DJANGO_DATABASE_PASSWORD"),
+        "HOST": os.environ.get("DJANGO_DATABASE_HOST"),
+        "PORT": os.environ.get("DJANGO_DATABASE_PORT"),
+        "OPTIONS": {"options": "-c search_path=public"},
     }
 }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
-]
+# AUTH_PASSWORD_VALIDATORS = [
+#     {
+#         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+#     },
+#     {
+#         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+#     },
+#     {
+#         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+#     },
+#     {
+#         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+#     },
+# ]
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
