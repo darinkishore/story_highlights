@@ -16,3 +16,6 @@ psycopg2-binary==2.9.6
 whitenoise
 django-htmx
 loguru
+django-easy-logging
+django-db-connection-pool[postgresql]
+
