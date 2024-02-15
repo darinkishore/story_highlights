@@ -23,7 +23,7 @@ async def highlight(request):
         f"Incoming request - Method: {request.method}, Data: {request.POST if request.method == 'POST' else 'N/A'}"
     )
     response_data = None
-    if request.method == "POST" and request.htmx:
+    if request.method == "POST":
         text = request.POST.get("input_text")
         html = await label_story(StoryHighlights(story=text))
         response_data = html
