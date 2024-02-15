@@ -6,16 +6,14 @@ from django.http import HttpResponse
 from .dat.models import StoryHighlights
 from django.template import loader
 from transformations.src.highlight_ai import label_story
-from django.views.decorators.csrf import csrf_exempt
-from loguru import logger
 from asgiref.sync import async_to_sync
+from django.views.decorators.csrf import csrf_exempt
 
 html_placeholder = "<p>Here is some text</p>"
 
 
 def index(request):
     template = loader.get_template("transformations/index.html")
-    logger.info(f"Rendering index.html")
     return HttpResponse(template.render({}, request))
 
 
@@ -27,12 +25,8 @@ async def highlight(request):
     response_data = None
     if request.method == "POST" and request.htmx:
         text = request.POST.get("input_text")
-        try:
-            html = await label_story(StoryHighlights(story=text))
-            response_data = html
-        except Exception as e:
-            logger.error(f"Error: {e}")
-            response_data = html_placeholder
+        html = await label_story(StoryHighlights(story=text))
+        response_data = html
         response = HttpResponse(response_data, content_type="text/html")
         logger.debug(
             f"Outgoing response - Status Code: {response.status_code}, Content Type: {response['Content-Type']}"
