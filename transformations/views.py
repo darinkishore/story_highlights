@@ -20,15 +20,19 @@ def index(request):
 
 
 @csrf_exempt
-def highlight(request):
+async def highlight(request):
     logger.info(
         f"Incoming request - Method: {request.method}, Data: {request.POST if request.method == 'POST' else 'N/A'}"
     )
     response_data = None
     if request.method == "POST" and request.htmx:
         text = request.POST.get("input_text")
-        html = async_to_sync(label_story(StoryHighlights(story=text)))
-        response_data = html
+        try:
+            html = await label_story(StoryHighlights(story=text))
+            response_data = html
+        except Exception as e:
+            logger.error(f"Error: {e}")
+            response_data = html_placeholder
         response = HttpResponse(response_data, content_type="text/html")
         logger.debug(
             f"Outgoing response - Status Code: {response.status_code}, Content Type: {response['Content-Type']}"
