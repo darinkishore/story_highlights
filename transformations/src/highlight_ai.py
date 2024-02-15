@@ -20,9 +20,6 @@ from typing import Any
 
 load_dotenv()
 
-# Refactored MODEL into a constant
-MODEL = "gpt-4-1106-preview"
-
 
 def get_last(message_history: List[dict]):
     return message_history[-1]["content"]
@@ -61,7 +58,7 @@ async def async_generate(prompt: str, max_tokens=500, message_history=None):
         message_history.append({"role": "user", "content": prompt})
         try:
             response = await client.chat.completions.create(
-                model=MODEL,
+                model="gpt-4-1106-preview",
                 messages=message_history,
                 temperature=0.0,
             )
@@ -69,7 +66,7 @@ async def async_generate(prompt: str, max_tokens=500, message_history=None):
             try:
                 time.sleep(0.5)
                 response = await client.chat.completions.create(
-                    model=MODEL,
+                    model="gpt-4-1106-preview",
                     messages=message_history,
                     temperature=0.0,
                 )
@@ -92,7 +89,7 @@ async def async_generate(prompt: str, max_tokens=500, message_history=None):
         ]
         try:
             response = await client.chat.completions.create(
-                model=MODEL,
+                model="gpt-4-1106-preview",
                 messages=messages,
                 temperature=0.0,
                 max_tokens=max_tokens,
@@ -101,7 +98,7 @@ async def async_generate(prompt: str, max_tokens=500, message_history=None):
             try:
                 time.sleep(0.5)
                 response = await client.chat.completions.create(
-                    model=MODEL,
+                    model="gpt-4-1106-preview",
                     messages=messages,
                     temperature=0.0,
                     max_tokens=max_tokens,
