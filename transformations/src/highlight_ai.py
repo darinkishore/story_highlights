@@ -23,7 +23,7 @@ from typing import Any
 load_dotenv()
 
 # Refactored MODEL into a constant
-MODEL = "gpt-3.5-turbo"
+MODEL = "gpt-4-1106-preview"
 
 
 def get_last(message_history: List[dict]):
