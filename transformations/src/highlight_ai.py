@@ -1,6 +1,8 @@
 import time
 from http.client import HTTPException
 import asyncio
+from loguru import logger
+
 from openai import OpenAI, AsyncOpenAI
 import openai
 from typing import List
@@ -21,7 +23,7 @@ from typing import Any
 load_dotenv()
 
 # Refactored MODEL into a constant
-MODEL = "gpt-4-1106-preview"
+MODEL = "gpt-3.5-turbo"
 
 
 def get_last(message_history: List[dict]):
@@ -35,6 +37,7 @@ async def generate_raw_highlights(initial_prompt, follow_up_prompt):
 
 
 async def label_story(story: StoryHighlights) -> str:
+    logger.info("Generating all prompts for the story")
     all_prompts = generate_all_prompts(str(story.story))
 
     highlight_generation_tasks = []
@@ -50,10 +53,12 @@ async def label_story(story: StoryHighlights) -> str:
         story.add_highlights(highlight_content)
 
     story.apply_html_highlights()
+    logger.info("Story highlights applied")
     return story.html_story
 
 
 async def async_generate(prompt: str, max_tokens=500, message_history=None):
+    logger.info("Starting asynchronous generation of prompt")
     if message_history is None:
         message_history = []
     client = AsyncOpenAI()
@@ -66,6 +71,7 @@ async def async_generate(prompt: str, max_tokens=500, message_history=None):
                 temperature=0.0,
             )
         except (openai.OpenAIError, openai.APIError, openai.RateLimitError) as e:
+            logger.error(f"Error occurred: {e}")
             try:
                 time.sleep(0.5)
                 response = await client.chat.completions.create(
@@ -78,7 +84,9 @@ async def async_generate(prompt: str, max_tokens=500, message_history=None):
                 openai.APIError,
                 openai.RateLimitError,
             ) as e:
+                logger.error(f"Error occurred: {e}")
                 raise e
+        logger.info("Asynchronous generation of prompt completed")
         return message_history + [
             {
                 "role": "assistant",
@@ -98,6 +106,7 @@ async def async_generate(prompt: str, max_tokens=500, message_history=None):
                 max_tokens=max_tokens,
             )
         except (openai.OpenAIError, openai.APIError, openai.RateLimitError) as e:
+            logger.error(f"Error occurred: {e}")
             try:
                 time.sleep(0.5)
                 response = await client.chat.completions.create(
@@ -111,7 +120,9 @@ async def async_generate(prompt: str, max_tokens=500, message_history=None):
                 openai.APIError,
                 openai.RateLimitError,
             ) as e:
+                logger.error(f"Error occurred: {e}")
                 raise e
+        logger.info("Asynchronous generation of prompt completed")
         return messages + [
             {
                 "role": "assistant",
