@@ -1,5 +1,6 @@
 # transfomations/views.py
-from .logger import logger
+from loguru import logger
+
 from django.shortcuts import render
 from django.http import HttpResponse
 
