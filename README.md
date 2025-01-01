@@ -1,107 +1,102 @@
-# Intro
+# Story Highligter 
 
-Run: `granian --interface wsgi vercel_app.wsgi:app --reload` 
+Story Highlighter is a Django-based application for LLM-powered story highlighting. It provides a set of models, prompts, and tests that enable the generation and application of labeled highlights to various texts—particularly “stories”—primarily for use in automating tiktok video generation according to an arbitrary set of rules. 
 
+## Overview
 
-This example shows how to use Django 4 on Vercel with Serverless Functions using the [Python Runtime](https://vercel.com/docs/concepts/functions/serverless-functions/runtimes/python).
+Story Highlighter is designed as a Django app that processes user-provided stories or text, sends them to an LLM (e.g., GPT-4), and returns highlight labels according to a set of categories. Each highlight is mapped to a color, then rendered in HTML. The system is organized around a few primary components:
 
-## Demo
+- **transformations/**  
+  This Django app contains the models (e.g., `Story`, `StoryDetail`, `Highlight`, `StoryHighlights`), the logic for prompt creation (in `prompts/`), reference story examples, and test coverage.  
+  - `models.py` in the main transformations directory (and in `dat/models.py`) define Pydantic or Django-based model structures.  
+  - `src/highlight_ai.py` handles sending text to an LLM with structured prompts, merges highlights, and returns HTML.  
+  - `dat/prompts/` includes prompt templates and examples that feed into your label logic.  
+  - `dat/reference_stories/` houses sample stories plus labeled segments, illustrating how the labeling system should work.
 
-https://django-template.vercel.app/
+- **vercel_app/**  
+  This is the Django project directory with `settings.py`, `urls.py`, and other configuration files. It’s set up to deploy on Vercel (or can be run locally). The Django settings are configured to use environment variables for database connectivity and other secrets.  
 
-## How it Works
+- **manage.py**  
+  Standard Django entry point for running commands (migrations, server, etc.).
 
-Our Django application, `example` is configured as an installed application in `vercel_app/settings.py`:
+- **requirements.txt**  
+  Lists the dependencies, including OpenAI, Django, and a few testing and logging libraries.
 
-```python
-# vercel_app/settings.py
-INSTALLED_APPS = [
-    # ...
-    'example',
-]
+- **Tests**  
+  A variety of tests (Pytest style) live under `transformations/dat/test_*.py` and the top-level `tests.py`. These cover model initialization, highlight logic, HTML generation, and more.
+
+## Key Features
+
+1. **Story and Highlight Models**  
+   `StoryHighlights` and `Highlight` track how each snippet of text should be labeled and displayed.  
+
+2. **Prompt Templates & LLM Integration**  
+   In `prompts/prompt_templates.py`, you’ll find logic that auto-generates prompts to be sent to an OpenAI model. It categorizes highlights into Characters, Plot Elements, Descriptions, etc.
+
+3. **Reference Stories**  
+   The `reference_stories` folder includes example stories with thorough “labeled sections,” making it easy to see how the pipeline infers and marks text with an LLM.
+
+4. **Asynchronous Calls to GPT**  
+   `highlight_ai.py` demonstrates asynchronous usage of the OpenAI API, bridging Django with Python’s `asyncio`.
+
+5. **HTML Highlight Rendering**  
+   After receiving label data from GPT, the system inserts inline HTML `<span style="color:...">...</span>` tags for easy color-based highlighting.
+
+## Getting Started
+
+1. **Clone the Repository**  
+   ```bash
+   git clone https://github.com/yourusername/LLMStoryLab.git
+   cd LLMStoryLab
+   ```
+
+   
+2.	Install Dependencies
+```
+pip install -r requirements.txt
 ```
 
-We allow "\*.vercel.app" subdomains in `ALLOWED_HOSTS`, in addition to 127.0.0.1:
-
-```python
-# vercel_app/settings.py
-ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app']
+3.	Set Up Environment Variables
+Create a .env file or export env variables for your OpenAI credentials, database, etc. Example:
+```
+DJANGO_SECRET_KEY=someSecretKey
+OPENAI_API_KEY=your_openai_key
+DJANGO_DEBUG=True
+SECRET_KEY=&yz70mwzl*4qsjq8fexdz!s@jl6q$#5u_%srecpc*)m9l-)nj3 (change this!)
+DJANGO_ALLOWED_HOSTS=*
+# DJANGO_DATABASE_URL=postgres://
+DJANGO_DATABASE_NAME=postgres
+DJANGO_DATABASE_USER=postgres
+DJANGO_DATABASE_PASSWORD=alsopostgres
+DJANGO_DATABASE_HOST=aws-0-us-west-1.pooler.supabase.com
+DJANGO_DATABASE_PORT=5432
 ```
 
-The `wsgi` module must use a public variable named `app` to expose the WSGI application:
+4.	Apply Migrations and Run Locally
 
-```python
-# vercel_app/wsgi.py
-app = get_wsgi_application()
 ```
-
-The corresponding `WSGI_APPLICATION` setting is configured to use the `app` variable from the `vercel_app.wsgi` module:
-
-```python
-# vercel_app/settings.py
-WSGI_APPLICATION = 'vercel_app.wsgi.app'
-```
-
-There is a single view which renders the current time in `example/views.py`:
-
-```python
-# example/views.py
-from datetime import datetime
-
-from django.http import HttpResponse
-
-
-def index(request):
-    now = datetime.now()
-    html = f'''
-    <html>
-        <body>
-            <h1>Hello from Vercel!</h1>
-            <p>The current time is { now }.</p>
-        </body>
-    </html>
-    '''
-    return HttpResponse(html)
-```
-
-This view is exposed a URL through `example/urls.py`:
-
-```python
-# example/urls.py
-from django.urls import path
-
-from example.views import index
-
-
-urlpatterns = [
-    path('', index),
-]
-```
-
-Finally, it's made accessible to the Django server inside `vercel_app/urls.py`:
-
-```python
-# vercel_app/urls.py
-from django.urls import path, include
-
-urlpatterns = [
-    ...
-    path('', include('example.urls')),
-]
-```
-
-This example uses the Web Server Gateway Interface (WSGI) with Django to enable handling requests on Vercel with Serverless Functions.
-
-## Running Locally
-
-```bash
+python manage.py migrate
 python manage.py runserver
 ```
+By default, it'll run at http://127.0.0.1:8000.
 
-Your Django application is now available at `http://localhost:8000`.
+5.	Explore the Transformations App
+6.	Visit the root URL. Then go to /highlight (see transformations/urls.py) to test the highlight logic in an HTMX-based form submission flow. You can paste text and see how the LLM labeling pipeline processes it.
 
-## One-Click Deploy
+7. Optional: Run with Granian
+If you want to try a different server or just wanna go real fast >:) 
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=vercel-examples):
+```
+granian --interface wsgi vercel_app.wsgi:app --reload
+```
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fexamples%2Ftree%2Fmain%2Fpython%2Fdjango&demo-title=Django%20%2B%20Vercel&demo-description=Use%20Django%204%20on%20Vercel%20with%20Serverless%20Functions%20using%20the%20Python%20Runtime.&demo-url=https%3A%2F%2Fdjango-template.vercel.app%2F&demo-image=https://assets.vercel.com/image/upload/v1669994241/random/django.png)
+7.	Deploying to Vercel
+The project is set up for quick deploy via the Python Runtime on Vercel. Make sure to set environment variables in Vercel’s dashboard for your Django secret keys, OpenAI key, etc. More details are in vercel_app/settings.py and the included vercel.json.
+
+Contributing
+
+Contributions are welcome. Feel free to open issues for any bugs, suggestions, or enhancements. This repo includes a variety of test files to ensure the reliability of highlight logic, so be sure to write your own tests or run existing ones (pytest) before submitting PRs.
+
+License
+
+MIT. 
