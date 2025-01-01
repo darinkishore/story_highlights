@@ -19,3 +19,6 @@ venv.bak/
 .idx
 
 staticfiles
+
+# Environment files
+.env
